@@ -1,21 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth/config'
-import prisma from '@/lib/prisma'
+import { auth } from '@/lib/auth'
+import prisma from '@/lib/prisma/db'
 
 // DELETE /api/admin/holidays/[id] - Delete holiday
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
     if (!session || (session.user.role !== 'ADMIN' && session.user.role !== 'BENDAHARA')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { id } = await params
+
     await prisma.holiday.delete({
-      where: { id: params.id }
+      where: { id }
     })
 
     // Log audit
@@ -24,7 +25,7 @@ export async function DELETE(
         userId: session.user.id,
         action: 'DELETE_HOLIDAY',
         entity: 'Holiday',
-        entityId: params.id
+        entityId: id
       }
     })
 
@@ -38,18 +39,19 @@ export async function DELETE(
 // PUT /api/admin/holidays/[id] - Update holiday
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
     if (!session || (session.user.role !== 'ADMIN' && session.user.role !== 'BENDAHARA')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { id } = await params
     const { date, name, description, isRecurring } = await request.json()
 
     const holiday = await prisma.holiday.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         ...(date && { date: new Date(date) }),
         ...(name && { name }),
@@ -64,7 +66,7 @@ export async function PUT(
         userId: session.user.id,
         action: 'UPDATE_HOLIDAY',
         entity: 'Holiday',
-        entityId: params.id,
+        entityId: id,
         metadata: JSON.stringify({ name, date })
       }
     })
