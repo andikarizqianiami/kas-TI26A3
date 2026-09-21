@@ -56,8 +56,8 @@ npm run dev
 
 Setelah seeding database:
 
-- **Admin**: `admin@kas-ti26a3.test` / `admin123`
-- **Bendahara**: `bendahara@kas-ti26a3.test` / `bendahara123`
+- **Admin**: `admin@ti26a3.udb.ac.id` / `admin123`
+- **Bendahara**: `bendahara@ti26a3.udb.ac.id` / `bendahara123`
 
 ## 📝 License
 

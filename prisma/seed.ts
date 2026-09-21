@@ -29,7 +29,7 @@ async function main() {
   const adminPassword = await hashPassword('admin123')
   const admin = await prisma.user.create({
     data: {
-      email: 'admin@kas-ti26a3.test',
+      email: 'admin@ti26a3.udb.ac.id',
       password: adminPassword,
       role: Role.ADMIN,
       isActive: true,
@@ -41,7 +41,7 @@ async function main() {
   const bendaharaPassword = await hashPassword('bendahara123')
   const bendahara = await prisma.user.create({
     data: {
-      email: 'bendahara@kas-ti26a3.test',
+      email: 'bendahara@ti26a3.udb.ac.id',
       password: bendaharaPassword,
       role: Role.BENDAHARA,
       isActive: true,
@@ -94,11 +94,11 @@ async function main() {
   console.log('')
   console.log('🔐 Login Credentials:')
   console.log('   Admin:')
-  console.log('   - Email: admin@kas-ti26a3.test')
+  console.log('   - Email: admin@ti26a3.udb.ac.id')
   console.log('   - Password: admin123')
   console.log('')
   console.log('   Bendahara:')
-  console.log('   - Email: bendahara@kas-ti26a3.test')
+  console.log('   - Email: bendahara@ti26a3.udb.ac.id')
   console.log('   - Password: bendahara123')
   console.log('')
   console.log('📝 Next Steps:')
