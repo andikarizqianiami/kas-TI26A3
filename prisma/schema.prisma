@@ -452,3 +452,37 @@ model AuditLog {
   @@index([createdAt])
   @@map("audit_logs")
 }
+
+// ============================================
+// HOLIDAYS & BILL SCHEDULE
+// ============================================
+
+model Holiday {
+  id              String    @id @default(cuid())
+  date            DateTime  @db.Date
+  name            String
+  description     String?
+  isRecurring     Boolean   @default(false) // Jika true, akan repeat setiap tahun
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([date])
+  @@map("holidays")
+}
+
+model BillSchedule {
+  id              String    @id @default(cuid())
+  weekStartDate   DateTime  @db.Date // Tanggal awal minggu
+  weekEndDate     DateTime  @db.Date // Tanggal akhir minggu
+  billDay         String    // "MONDAY", "TUESDAY", etc
+  billDate        DateTime  @db.Date // Tanggal deadline yang sudah dihitung
+  amount          Int       @default(5000)
+  isGenerated     Boolean   @default(false) // Apakah sudah di-generate bill
+  notes           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([weekStartDate])
+  @@index([billDate])
+  @@map("bill_schedules")
+}
