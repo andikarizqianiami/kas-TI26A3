@@ -1,0 +1,451 @@
+// KAS TI26A3 Database Schema
+// PostgreSQL with Prisma ORM
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ============================================
+// USER & AUTHENTICATION
+// ============================================
+
+enum Role {
+  ADMIN
+  BENDAHARA
+  MAHASISWA
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  role          Role      @default(MAHASISWA)
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  student       Student?
+  auditLogs     AuditLog[]
+  
+  @@map("users")
+}
+
+// ============================================
+// STUDENTS
+// ============================================
+
+model Student {
+  id              String    @id @default(cuid())
+  nim             String    @unique
+  name            String
+  email           String    @unique
+  whatsapp        String
+  class           String    @default("TI26A3")
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  // Relations
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  bills           Bill[]
+  payments        Payment[]
+  notifications   Notification[]
+  contributions   Contribution[]
+  
+  @@map("students")
+}
+
+// ============================================
+// BILLING SYSTEM
+// ============================================
+
+enum BillStatus {
+  UNPAID
+  PAID
+  OVERDUE
+}
+
+model Bill {
+  id              String      @id @default(cuid())
+  studentId       String
+  name            String      // "Kas Mingguan"
+  description     String?
+  amount          Int         // 5000
+  weekPeriod      String      // "2026-W38"
+  weekStartDate   DateTime    // Tanggal mulai minggu
+  deadline        DateTime    // Rabu
+  status          BillStatus  @default(UNPAID)
+  paidAt          DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  // Relations
+  student         Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  payment         Payment?
+  
+  // Prevent duplicate bills per student per week
+  @@unique([studentId, weekPeriod])
+  @@index([studentId])
+  @@index([weekPeriod])
+  @@index([status])
+  @@map("bills")
+}
+
+// ============================================
+// PAYMENT SYSTEM
+// ============================================
+
+enum PaymentMethod {
+  QRIS_DANA
+  MANUAL_TRANSFER
+  OTHER
+}
+
+enum PaymentStatus {
+  PENDING_PAYMENT     // Transaksi dibuat, menunggu pembayaran
+  PENDING_VERIFICATION // Transfer manual, menunggu verifikasi admin
+  PAID                // Berhasil
+  REJECTED            // Ditolak admin
+  EXPIRED             // Kadaluarsa
+  CANCELLED           // Dibatalkan
+}
+
+model Payment {
+  id                  String          @id @default(cuid())
+  billId              String          @unique
+  studentId           String
+  transactionId       String?         @unique // Optional for manual
+  amount              Int
+  method              PaymentMethod   @default(QRIS_DANA)
+  status              PaymentStatus   @default(PENDING_VERIFICATION)
+  
+  // Manual payment fields (QRIS DANA or Transfer)
+  proofImageUrl       String?         // Bukti transfer/screenshot
+  paymentDate         DateTime?       // Tanggal user bayar
+  paymentNotes        String?         // Catatan dari mahasiswa
+  verifiedBy          String?         // Admin/Bendahara ID
+  verifiedAt          DateTime?
+  rejectionReason     String?
+  
+  // Metadata
+  paidAt              DateTime?       // Kapan status jadi PAID
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  
+  // Relations
+  bill                Bill            @relation(fields: [billId], references: [id], onDelete: Cascade)
+  student             Student         @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  webhookEvents       WebhookEvent[]
+  
+  @@index([studentId])
+  @@index([status])
+  @@index([transactionId])
+  @@map("payments")
+}
+
+// ============================================
+// WEBHOOK EVENTS
+// ============================================
+
+model WebhookEvent {
+  id              String    @id @default(cuid())
+  paymentId       String?
+  provider        String    // "midtrans" or "xendit"
+  eventType       String
+  rawPayload      String    @db.Text // JSON string
+  signature       String?
+  isProcessed     Boolean   @default(false)
+  processedAt     DateTime?
+  errorMessage    String?
+  createdAt       DateTime  @default(now())
+  
+  // Relations
+  payment         Payment?  @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+  
+  @@index([paymentId])
+  @@index([isProcessed])
+  @@map("webhook_events")
+}
+
+// ============================================
+// PAYMENT METHODS / BANK ACCOUNTS
+// ============================================
+
+model PaymentAccount {
+  id              String    @id @default(cuid())
+  name            String    // "QRIS DANA - Bendahara TI26A3"
+  type            String    // "QRIS_DANA", "BANK", "EWALLET"
+  accountNumber   String?   // Optional untuk QRIS
+  accountName     String    // Nama penerima
+  qrisImageUrl    String?   // Path/URL QRIS image
+  description     String?   // Keterangan tambahan
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@map("payment_accounts")
+}
+
+// ============================================
+// CASH MANAGEMENT
+// ============================================
+
+enum IncomeCategory {
+  KAS_MINGGUAN
+  DONASI
+  LAINNYA
+}
+
+model CashIncome {
+  id              String          @id @default(cuid())
+  category        IncomeCategory  @default(KAS_MINGGUAN)
+  description     String
+  amount          Int
+  date            DateTime        @default(now())
+  paymentId       String?         // Link to payment if from kas mingguan
+  notes           String?
+  createdBy       String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  @@index([category])
+  @@index([date])
+  @@map("cash_incomes")
+}
+
+enum ExpenseCategory {
+  KEGIATAN_KELAS
+  KONSUMSI
+  ACARA
+  PERLENGKAPAN
+  TRANSPORTASI
+  LAINNYA
+}
+
+model CashExpense {
+  id              String          @id @default(cuid())
+  category        ExpenseCategory
+  description     String
+  amount          Int
+  date            DateTime        @default(now())
+  proofImageUrl   String?
+  notes           String?
+  createdBy       String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  @@index([category])
+  @@index([date])
+  @@map("cash_expenses")
+}
+
+// ============================================
+// REPORTS
+// ============================================
+
+model WeeklyReport {
+  id                    String    @id @default(cuid())
+  weekPeriod            String    @unique // "2026-W38"
+  weekStartDate         DateTime
+  weekEndDate           DateTime
+  totalStudents         Int
+  totalPaid             Int
+  totalUnpaid           Int
+  totalOverdue          Int
+  totalIncome           Int
+  totalExpense          Int
+  balance               Int
+  createdAt             DateTime  @default(now())
+  
+  @@index([weekPeriod])
+  @@map("weekly_reports")
+}
+
+// ============================================
+// NOTIFICATIONS
+// ============================================
+
+enum NotificationType {
+  NEW_BILL
+  PAYMENT_SUCCESS
+  PAYMENT_REJECTED
+  PAYMENT_REMINDER
+  OVERDUE_REMINDER
+  ANNOUNCEMENT
+}
+
+enum NotificationChannel {
+  IN_APP
+  WHATSAPP
+}
+
+model Notification {
+  id              String              @id @default(cuid())
+  studentId       String
+  type            NotificationType
+  title           String
+  message         String              @db.Text
+  isRead          Boolean             @default(false)
+  createdAt       DateTime            @default(now())
+  
+  // Relations
+  student         Student             @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  
+  @@index([studentId])
+  @@index([isRead])
+  @@map("notifications")
+}
+
+model NotificationLog {
+  id                  String              @id @default(cuid())
+  recipientId         String
+  channel             NotificationChannel
+  message             String              @db.Text
+  status              String              // "sent", "failed", "pending"
+  providerMessageId   String?
+  errorMessage        String?
+  sentAt              DateTime            @default(now())
+  
+  @@index([recipientId])
+  @@index([status])
+  @@map("notification_logs")
+}
+
+// ============================================
+// ANNOUNCEMENTS
+// ============================================
+
+enum AnnouncementPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+model Announcement {
+  id              String                  @id @default(cuid())
+  title           String
+  content         String                  @db.Text
+  priority        AnnouncementPriority    @default(NORMAL)
+  isActive        Boolean                 @default(true)
+  createdBy       String
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+  
+  @@index([isActive])
+  @@map("announcements")
+}
+
+// ============================================
+// FUNDING TARGETS (TARGET URUNAN)
+// ============================================
+
+enum FundingTargetStatus {
+  ACTIVE        // Sedang berlangsung
+  COMPLETED     // Target tercapai
+  CANCELLED     // Dibatalkan
+  EXPIRED       // Melewati deadline
+}
+
+model FundingTarget {
+  id              String              @id @default(cuid())
+  title           String              // "Urunan Workshop Web Development"
+  description     String              @db.Text
+  targetAmount    Int                 // Target nominal total (IDR)
+  currentAmount   Int                 @default(0) // Total terkumpul
+  deadline        DateTime?           // Optional deadline
+  status          FundingTargetStatus @default(ACTIVE)
+  imageUrl        String?             // Optional gambar banner
+  createdBy       String              // User ID admin/bendahara
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  
+  // Relations
+  contributions   Contribution[]
+  
+  @@index([status])
+  @@index([createdAt])
+  @@map("funding_targets")
+}
+
+enum ContributionStatus {
+  PENDING_VERIFICATION  // Menunggu verifikasi
+  VERIFIED              // Sudah diverifikasi
+  REJECTED              // Ditolak
+}
+
+model Contribution {
+  id                  String              @id @default(cuid())
+  fundingTargetId     String
+  studentId           String
+  amount              Int                 // Nominal kontribusi
+  method              PaymentMethod       @default(MANUAL_TRANSFER)
+  status              ContributionStatus  @default(PENDING_VERIFICATION)
+  
+  // Payment proof
+  proofImageUrl       String?             // Bukti transfer
+  paymentDate         DateTime?           // Tanggal bayar
+  paymentNotes        String?             // Catatan mahasiswa
+  
+  // Verification
+  verifiedBy          String?             // User ID verifikator
+  verifiedAt          DateTime?
+  rejectionReason     String?
+  
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  
+  // Relations
+  fundingTarget       FundingTarget       @relation(fields: [fundingTargetId], references: [id], onDelete: Cascade)
+  student             Student             @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  
+  @@index([fundingTargetId])
+  @@index([studentId])
+  @@index([status])
+  @@map("contributions")
+}
+
+// ============================================
+// SYSTEM SETTINGS
+// ============================================
+
+model SystemSetting {
+  id              String    @id @default(cuid())
+  key             String    @unique
+  value           String    @db.Text
+  description     String?
+  updatedAt       DateTime  @updatedAt
+  
+  @@map("system_settings")
+}
+
+// ============================================
+// AUDIT LOG
+// ============================================
+
+model AuditLog {
+  id              String    @id @default(cuid())
+  userId          String
+  action          String    // "CREATE_BILL", "VERIFY_PAYMENT", etc.
+  entity          String    // "Bill", "Payment", etc.
+  entityId        String?
+  metadata        String?   @db.Text // JSON string
+  ipAddress       String?
+  createdAt       DateTime  @default(now())
+  
+  // Relations
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
