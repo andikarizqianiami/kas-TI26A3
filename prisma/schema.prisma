@@ -24,6 +24,7 @@ model User {
   id            String    @id @default(cuid())
   email         String    @unique
   password      String
+  name          String?   // Added name field
   role          Role      @default(MAHASISWA)
   isActive      Boolean   @default(true)
   createdAt     DateTime  @default(now())
@@ -211,6 +212,7 @@ model CashIncome {
   amount          Int
   date            DateTime        @default(now())
   paymentId       String?         // Link to payment if from kas mingguan
+  source          String?         // Added source field
   notes           String?
   createdBy       String
   createdAt       DateTime        @default(now())
@@ -278,6 +280,7 @@ enum NotificationType {
   PAYMENT_SUCCESS
   PAYMENT_REJECTED
   PAYMENT_REMINDER
+  PAYMENT_PENDING
   OVERDUE_REMINDER
   ANNOUNCEMENT
 }
