@@ -125,6 +125,184 @@ export default function ScheduleClient() {
         </button>
       </div>
 
+      {/* Quick Access Menu */}
+      <div className="card" style={{ marginBottom: '2rem' }}>
+        <h3 style={{ marginBottom: '1.5rem' }}>Menu Cepat</h3>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '1rem'
+        }}>
+          <a href="/dashboard/admin/students" style={{ textDecoration: 'none' }}>
+            <div style={{
+              padding: '1.5rem',
+              border: '2px solid #e0e0e0',
+              borderRadius: '8px',
+              textAlign: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              background: '#fff'
+            }} onMouseOver={(e) => {
+              e.currentTarget.style.borderColor = '#3b82f6'
+              e.currentTarget.style.background = '#eff6ff'
+            }} onMouseOut={(e) => {
+              e.currentTarget.style.borderColor = '#e0e0e0'
+              e.currentTarget.style.background = '#fff'
+            }}>
+              <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>👥</div>
+              <div style={{ fontWeight: '600', color: '#1e293b' }}>Manajemen Mahasiswa</div>
+            </div>
+          </a>
+
+          <a href="/dashboard/admin/bills" style={{ textDecoration: 'none' }}>
+            <div style={{
+              padding: '1.5rem',
+              border: '2px solid #e0e0e0',
+              borderRadius: '8px',
+              textAlign: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              background: '#fff'
+            }} onMouseOver={(e) => {
+              e.currentTarget.style.borderColor = '#3b82f6'
+              e.currentTarget.style.background = '#eff6ff'
+            }} onMouseOut={(e) => {
+              e.currentTarget.style.borderColor = '#e0e0e0'
+              e.currentTarget.style.background = '#fff'
+            }}>
+              <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📄</div>
+              <div style={{ fontWeight: '600', color: '#1e293b' }}>Manajemen Tagihan</div>
+            </div>
+          </a>
+
+          <a href="/dashboard/admin/payments" style={{ textDecoration: 'none' }}>
+            <div style={{
+              padding: '1.5rem',
+              border: '2px solid #e0e0e0',
+              borderRadius: '8px',
+              textAlign: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              background: '#fff'
+            }} onMouseOver={(e) => {
+              e.currentTarget.style.borderColor = '#3b82f6'
+              e.currentTarget.style.background = '#eff6ff'
+            }} onMouseOut={(e) => {
+              e.currentTarget.style.borderColor = '#e0e0e0'
+              e.currentTarget.style.background = '#fff'
+            }}>
+              <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>💵</div>
+              <div style={{ fontWeight: '600', color: '#1e293b' }}>Verifikasi Pembayaran</div>
+            </div>
+          </a>
+
+          <a href="/dashboard/admin/cash" style={{ textDecoration: 'none' }}>
+            <div style={{
+              padding: '1.5rem',
+              border: '2px solid #e0e0e0',
+              borderRadius: '8px',
+              textAlign: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              background: '#fff'
+            }} onMouseOver={(e) => {
+              e.currentTarget.style.borderColor = '#3b82f6'
+              e.currentTarget.style.background = '#eff6ff'
+            }} onMouseOut={(e) => {
+              e.currentTarget.style.borderColor = '#e0e0e0'
+              e.currentTarget.style.background = '#fff'
+            }}>
+              <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📊</div>
+              <div style={{ fontWeight: '600', color: '#1e293b' }}>Pengelolaan Kas</div>
+            </div>
+          </a>
+
+          <a href="/dashboard/admin/reports" style={{ textDecoration: 'none' }}>
+            <div style={{
+              padding: '1.5rem',
+              border: '2px solid #e0e0e0',
+              borderRadius: '8px',
+              textAlign: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              background: '#fff'
+            }} onMouseOver={(e) => {
+              e.currentTarget.style.borderColor = '#3b82f6'
+              e.currentTarget.style.background = '#eff6ff'
+            }} onMouseOut={(e) => {
+              e.currentTarget.style.borderColor = '#e0e0e0'
+              e.currentTarget.style.background = '#fff'
+            }}>
+              <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📈</div>
+              <div style={{ fontWeight: '600', color: '#1e293b' }}>Laporan</div>
+            </div>
+          </a>
+
+          <a href="/dashboard/admin/announcements" style={{ textDecoration: 'none' }}>
+            <div style={{
+              padding: '1.5rem',
+              border: '2px solid #e0e0e0',
+              borderRadius: '8px',
+              textAlign: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              background: '#fff'
+            }} onMouseOver={(e) => {
+              e.currentTarget.style.borderColor = '#3b82f6'
+              e.currentTarget.style.background = '#eff6ff'
+            }} onMouseOut={(e) => {
+              e.currentTarget.style.borderColor = '#e0e0e0'
+              e.currentTarget.style.background = '#fff'
+            }}>
+              <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📢</div>
+              <div style={{ fontWeight: '600', color: '#1e293b' }}>Pengumuman</div>
+            </div>
+          </a>
+
+          <a href="/dashboard/admin/settings" style={{ textDecoration: 'none' }}>
+            <div style={{
+              padding: '1.5rem',
+              border: '2px solid #e0e0e0',
+              borderRadius: '8px',
+              textAlign: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              background: '#fff'
+            }} onMouseOver={(e) => {
+              e.currentTarget.style.borderColor = '#3b82f6'
+              e.currentTarget.style.background = '#eff6ff'
+            }} onMouseOut={(e) => {
+              e.currentTarget.style.borderColor = '#e0e0e0'
+              e.currentTarget.style.background = '#fff'
+            }}>
+              <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>⚙️</div>
+              <div style={{ fontWeight: '600', color: '#1e293b' }}>Pengaturan</div>
+            </div>
+          </a>
+
+          <a href="/dashboard" style={{ textDecoration: 'none' }}>
+            <div style={{
+              padding: '1.5rem',
+              border: '2px solid #e0e0e0',
+              borderRadius: '8px',
+              textAlign: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              background: '#fff'
+            }} onMouseOver={(e) => {
+              e.currentTarget.style.borderColor = '#3b82f6'
+              e.currentTarget.style.background = '#eff6ff'
+            }} onMouseOut={(e) => {
+              e.currentTarget.style.borderColor = '#e0e0e0'
+              e.currentTarget.style.background = '#fff'
+            }}>
+              <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🏠</div>
+              <div style={{ fontWeight: '600', color: '#1e293b' }}>Dashboard</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
       {showForm && (
         <div className="card" style={{ marginBottom: '2rem' }}>
           <h3>Tambah Jadwal Kas Baru</h3>
