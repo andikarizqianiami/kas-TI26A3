@@ -26,7 +26,8 @@ async function main() {
 
   // Create Admin User
   console.log('👤 Creating admin user...')
-  const adminPassword = await hashPassword('admin123')
+  // PENTING: Ganti password ini setelah deployment pertama!
+  const adminPassword = await hashPassword(process.env.ADMIN_DEFAULT_PASSWORD || 'ChangeThisPassword123!')
   const admin = await prisma.user.create({
     data: {
       email: 'admin@ti26a3.udb.ac.id',
@@ -38,7 +39,8 @@ async function main() {
 
   // Create Bendahara User
   console.log('👤 Creating bendahara user...')
-  const bendaharaPassword = await hashPassword('bendahara123')
+  // PENTING: Ganti password ini setelah deployment pertama!
+  const bendaharaPassword = await hashPassword(process.env.BENDAHARA_DEFAULT_PASSWORD || 'ChangeThisPassword123!')
   const bendahara = await prisma.user.create({
     data: {
       email: 'bendahara@ti26a3.udb.ac.id',
@@ -95,17 +97,20 @@ async function main() {
   console.log('🔐 Login Credentials:')
   console.log('   Admin:')
   console.log('   - Email: admin@ti26a3.udb.ac.id')
-  console.log('   - Password: admin123')
+  console.log('   - Password: (check environment variable or default)')
   console.log('')
   console.log('   Bendahara:')
   console.log('   - Email: bendahara@ti26a3.udb.ac.id')
-  console.log('   - Password: bendahara123')
+  console.log('   - Password: (check environment variable or default)')
+  console.log('')
+  console.log('⚠️  IMPORTANT: Change default passwords immediately after first login!')
   console.log('')
   console.log('📝 Next Steps:')
   console.log('   1. Login as admin or bendahara')
-  console.log('   2. Add students via Dashboard > Mahasiswa')
-  console.log('   3. Upload QRIS payment image via Settings')
-  console.log('   4. Create weekly bills when ready')
+  console.log('   2. Change password via Settings')
+  console.log('   3. Add students via Dashboard > Mahasiswa')
+  console.log('   4. Upload QRIS payment image via Settings')
+  console.log('   5. Create weekly bills when ready')
   console.log('')
 }
 

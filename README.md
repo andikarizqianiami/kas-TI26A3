@@ -54,10 +54,14 @@ npm run dev
 
 ## 🔐 Default Accounts
 
-Setelah seeding database:
+Setelah seeding database, login dengan akun:
 
-- **Admin**: `admin@ti26a3.udb.ac.id` / `admin123`
-- **Bendahara**: `bendahara@ti26a3.udb.ac.id` / `bendahara123`
+- **Admin**: `admin@ti26a3.udb.ac.id`
+- **Bendahara**: `bendahara@ti26a3.udb.ac.id`
+
+**Password**: Hubungi administrator untuk mendapatkan password awal.
+
+⚠️ **PENTING**: Segera ganti password setelah login pertama kali!
 
 ## 📝 License
 
