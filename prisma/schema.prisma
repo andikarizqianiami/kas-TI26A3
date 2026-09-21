@@ -59,7 +59,6 @@ model Student {
   bills           Bill[]
   payments        Payment[]
   notifications   Notification[]
-  contributions   Contribution[]
   
   @@map("students")
 }
@@ -350,71 +349,6 @@ model Announcement {
 // ============================================
 // FUNDING TARGETS (TARGET URUNAN)
 // ============================================
-
-enum FundingTargetStatus {
-  ACTIVE        // Sedang berlangsung
-  COMPLETED     // Target tercapai
-  CANCELLED     // Dibatalkan
-  EXPIRED       // Melewati deadline
-}
-
-model FundingTarget {
-  id              String              @id @default(cuid())
-  title           String              // "Urunan Workshop Web Development"
-  description     String              @db.Text
-  targetAmount    Int                 // Target nominal total (IDR)
-  currentAmount   Int                 @default(0) // Total terkumpul
-  deadline        DateTime?           // Optional deadline
-  status          FundingTargetStatus @default(ACTIVE)
-  imageUrl        String?             // Optional gambar banner
-  createdBy       String              // User ID admin/bendahara
-  createdAt       DateTime            @default(now())
-  updatedAt       DateTime            @updatedAt
-  
-  // Relations
-  contributions   Contribution[]
-  
-  @@index([status])
-  @@index([createdAt])
-  @@map("funding_targets")
-}
-
-enum ContributionStatus {
-  PENDING_VERIFICATION  // Menunggu verifikasi
-  VERIFIED              // Sudah diverifikasi
-  REJECTED              // Ditolak
-}
-
-model Contribution {
-  id                  String              @id @default(cuid())
-  fundingTargetId     String
-  studentId           String
-  amount              Int                 // Nominal kontribusi
-  method              PaymentMethod       @default(MANUAL_TRANSFER)
-  status              ContributionStatus  @default(PENDING_VERIFICATION)
-  
-  // Payment proof
-  proofImageUrl       String?             // Bukti transfer
-  paymentDate         DateTime?           // Tanggal bayar
-  paymentNotes        String?             // Catatan mahasiswa
-  
-  // Verification
-  verifiedBy          String?             // User ID verifikator
-  verifiedAt          DateTime?
-  rejectionReason     String?
-  
-  createdAt           DateTime            @default(now())
-  updatedAt           DateTime            @updatedAt
-  
-  // Relations
-  fundingTarget       FundingTarget       @relation(fields: [fundingTargetId], references: [id], onDelete: Cascade)
-  student             Student             @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  
-  @@index([fundingTargetId])
-  @@index([studentId])
-  @@index([status])
-  @@map("contributions")
-}
 
 // ============================================
 // SYSTEM SETTINGS
