@@ -125,10 +125,10 @@ async function main() {
     const student = students[i]
     
     // Varied bill status for demo
-    let status = BillStatus.UNPAID
-    if (i < 20) status = BillStatus.PAID      // 20 students paid
-    else if (i < 25) status = BillStatus.UNPAID // 5 students unpaid
-    else status = BillStatus.OVERDUE          // 5 students overdue
+    let status: 'UNPAID' | 'PAID' | 'OVERDUE' = 'UNPAID'
+    if (i < 20) status = 'PAID'      // 20 students paid
+    else if (i < 25) status = 'UNPAID' // 5 students unpaid
+    else status = 'OVERDUE'          // 5 students overdue
 
     const bill = await prisma.bill.create({
       data: {
@@ -140,7 +140,7 @@ async function main() {
         weekStartDate,
         deadline,
         status,
-        paidAt: status === BillStatus.PAID ? new Date() : null,
+        paidAt: status === 'PAID' ? new Date() : null,
       },
     })
 
