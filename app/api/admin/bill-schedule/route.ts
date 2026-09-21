@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Helper function to calculate bill date and adjust for holidays
+// Helper function to calculate bill date
 async function calculateBillDate(weekStart: Date, dayName: string): Promise<Date> {
   const dayMap: { [key: string]: number } = {
     SUNDAY: 0,
@@ -89,28 +89,5 @@ async function calculateBillDate(weekStart: Date, dayName: string): Promise<Date
   let billDate = new Date(weekStart)
   billDate.setDate(billDate.getDate() + daysToAdd)
 
-  // Check if bill date is a holiday
-  const holidays = await prisma.holiday.findMany({
-    where: {
-      date: {
-        gte: billDate,
-        lte: new Date(billDate.getTime() + 7 * 24 * 60 * 60 * 1000) // Next 7 days
-      }
-    }
-  })
-
-  // If bill date is a holiday, move to next non-holiday weekday
-  while (isHoliday(billDate, holidays) || billDate.getDay() === 0 || billDate.getDay() === 6) {
-    billDate.setDate(billDate.getDate() + 1)
-  }
-
   return billDate
-}
-
-function isHoliday(date: Date, holidays: any[]): boolean {
-  const dateStr = date.toISOString().split('T')[0]
-  return holidays.some(h => {
-    const holidayStr = new Date(h.date).toISOString().split('T')[0]
-    return holidayStr === dateStr
-  })
 }
