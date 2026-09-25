@@ -151,51 +151,51 @@ export default function AdminDashboard() {
           </div>
         ) : stats ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
-            <Card>
+            <Card style={{background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', border: 'none', color: 'white'}}>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">
+                <CardTitle className="text-sm font-medium" style={{color: 'white'}}>
                   Total Mahasiswa
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">{stats.students.active}</div>
-                <p className="text-xs text-gray-500 mt-1">Mahasiswa aktif</p>
+                <div className="text-3xl font-bold" style={{color: 'white'}}>{stats.students.active}</div>
+                <p className="text-xs mt-1" style={{color: 'rgba(255,255,255,0.9)'}}>Mahasiswa aktif</p>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card style={{background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', border: 'none', color: 'white'}}>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">
+                <CardTitle className="text-sm font-medium" style={{color: 'white'}}>
                   Sudah Bayar
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-green-600">{stats.bills.paid}</div>
-                <p className="text-xs text-gray-500 mt-1">Tagihan lunas</p>
+                <div className="text-3xl font-bold" style={{color: 'white'}}>{stats.bills.paid}</div>
+                <p className="text-xs mt-1" style={{color: 'rgba(255,255,255,0.9)'}}>Tagihan lunas</p>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card style={{background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', border: 'none', color: 'white'}}>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">
+                <CardTitle className="text-sm font-medium" style={{color: 'white'}}>
                   Belum Bayar
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-yellow-600">{stats.bills.unpaid + stats.bills.overdue}</div>
-                <p className="text-xs text-gray-500 mt-1">Perlu diingatkan</p>
+                <div className="text-3xl font-bold" style={{color: 'white'}}>{stats.bills.unpaid + stats.bills.overdue}</div>
+                <p className="text-xs mt-1" style={{color: 'rgba(255,255,255,0.9)'}}>Perlu diingatkan</p>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card style={{background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: 'none', color: 'white'}}>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">
+                <CardTitle className="text-sm font-medium" style={{color: 'white'}}>
                   Saldo Kas
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-blue-600">{formatCurrency(stats.cash.balance)}</div>
-                <p className="text-xs text-gray-500 mt-1">Saldo real-time</p>
+                <div className="text-3xl font-bold" style={{color: 'white'}}>{formatCurrency(stats.cash.balance)}</div>
+                <p className="text-xs mt-1" style={{color: 'rgba(255,255,255,0.9)'}}>Saldo real-time</p>
               </CardContent>
             </Card>
           </div>
