@@ -1032,3 +1032,185 @@ div[class*="rounded"][class*="border"]:not([class*="input"]):not([class*="button
 .pulse-glow {
   animation: pulse 2s ease-in-out infinite !important;
 }
+
+
+/* ===========================
+   CHARTS & CONTAINERS
+   =========================== */
+
+/* Chart Cards */
+.recharts-wrapper {
+  background: white !important;
+  border-radius: 12px !important;
+  padding: 16px !important;
+}
+
+/* Chart Container Styling */
+.dashboard-card .recharts-wrapper {
+  border-radius: 8px !important;
+}
+
+/* Modern Card Containers */
+.card,
+[data-slot="card"] {
+  background: white !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  border-radius: 16px !important;
+  box-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.04) !important;
+  transition: all 0.3s ease !important;
+}
+
+.card:hover,
+[data-slot="card"]:hover {
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    0 2px 6px rgba(0, 0, 0, 0.04) !important;
+  border-color: rgba(99, 102, 241, 0.2) !important;
+}
+
+/* Menu Items */
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.menu-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(99, 102, 241, 0.15);
+  border-color: #6366f1;
+}
+
+.menu-item svg {
+  color: #6366f1;
+  transition: all 0.3s ease;
+}
+
+.menu-item:hover svg {
+  transform: scale(1.1);
+  color: #8b5cf6;
+}
+
+.menu-item span {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #334155;
+}
+
+/* Header Styling */
+.bg-white {
+  background: white !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Container Spacing */
+.container {
+  max-width: 1400px !important;
+}
+
+/* Grid Improvements */
+.grid {
+  display: grid !important;
+}
+
+.gap-6 {
+  gap: 1.5rem !important;
+}
+
+/* Responsive Grid */
+@media (min-width: 768px) {
+  .md\\:grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .lg\\:grid-cols-4 {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  
+  .lg\\:grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+/* Text Improvements */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.text-gray-600 {
+  color: #64748b !important;
+}
+
+.text-blue-900 {
+  color: #1e3a8a !important;
+}
+
+/* Button Improvements */
+button {
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+}
+
+button:hover {
+  transform: translateY(-1px) !important;
+}
+
+/* Loading States */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Border Improvements */
+.border-b {
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
+}
+
+/* Spacing Utilities */
+.py-8 {
+  padding-top: 2rem !important;
+  padding-bottom: 2rem !important;
+}
+
+.px-4 {
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
+.mb-8 {
+  margin-bottom: 2rem !important;
+}
+
+/* Chart Colors */
+.recharts-line {
+  stroke-width: 3 !important;
+}
+
+.recharts-bar {
+  opacity: 0.9 !important;
+}
+
+.recharts-bar:hover {
+  opacity: 1 !important;
+}

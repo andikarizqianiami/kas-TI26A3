@@ -114,9 +114,9 @@ export default function AdminDashboard() {
   ] : []
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{background: 'linear-gradient(to bottom, #ffffff 0%, #f8fafc 100%)'}}>
       {/* Header */}
-      <div className="border-b bg-white">
+      <div className="border-b bg-white" style={{boxShadow: '0 1px 3px rgba(0,0,0,0.06)'}}>
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
@@ -151,51 +151,55 @@ export default function AdminDashboard() {
           </div>
         ) : stats ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
-            <Card style={{background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', border: 'none', color: 'white'}}>
+            <Card className="stat-card-1">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium" style={{color: 'white'}}>
+                <CardTitle className="text-sm font-medium flex items-center gap-2">
+                  <Users className="h-4 w-4" />
                   Total Mahasiswa
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold" style={{color: 'white'}}>{stats.students.active}</div>
-                <p className="text-xs mt-1" style={{color: 'rgba(255,255,255,0.9)'}}>Mahasiswa aktif</p>
+                <div className="text-3xl font-bold">{stats.students.active}</div>
+                <p className="text-xs mt-1 opacity-90">Mahasiswa aktif</p>
               </CardContent>
             </Card>
 
-            <Card style={{background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', border: 'none', color: 'white'}}>
+            <Card className="stat-card-2">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium" style={{color: 'white'}}>
+                <CardTitle className="text-sm font-medium flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4" />
                   Sudah Bayar
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold" style={{color: 'white'}}>{stats.bills.paid}</div>
-                <p className="text-xs mt-1" style={{color: 'rgba(255,255,255,0.9)'}}>Tagihan lunas</p>
+                <div className="text-3xl font-bold">{stats.bills.paid}</div>
+                <p className="text-xs mt-1 opacity-90">Tagihan lunas</p>
               </CardContent>
             </Card>
 
-            <Card style={{background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', border: 'none', color: 'white'}}>
+            <Card className="stat-card-3">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium" style={{color: 'white'}}>
+                <CardTitle className="text-sm font-medium flex items-center gap-2">
+                  <FileText className="h-4 w-4" />
                   Belum Bayar
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold" style={{color: 'white'}}>{stats.bills.unpaid + stats.bills.overdue}</div>
-                <p className="text-xs mt-1" style={{color: 'rgba(255,255,255,0.9)'}}>Perlu diingatkan</p>
+                <div className="text-3xl font-bold">{stats.bills.unpaid + stats.bills.overdue}</div>
+                <p className="text-xs mt-1 opacity-90">Perlu diingatkan</p>
               </CardContent>
             </Card>
 
-            <Card style={{background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: 'none', color: 'white'}}>
+            <Card className="stat-card-4">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium" style={{color: 'white'}}>
+                <CardTitle className="text-sm font-medium flex items-center gap-2">
+                  <DollarSign className="h-4 w-4" />
                   Saldo Kas
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold" style={{color: 'white'}}>{formatCurrency(stats.cash.balance)}</div>
-                <p className="text-xs mt-1" style={{color: 'rgba(255,255,255,0.9)'}}>Saldo real-time</p>
+                <div className="text-3xl font-bold">{formatCurrency(stats.cash.balance)}</div>
+                <p className="text-xs mt-1 opacity-90">Saldo real-time</p>
               </CardContent>
             </Card>
           </div>
