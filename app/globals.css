@@ -49,33 +49,27 @@ html {
 } 
 
 body {
-  background: linear-gradient(to bottom right, #f8fafc 0%, #e0e7ff 50%, #fce7f3 100%) !important;
+  background: #ffffff !important;
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
 }
 
-/* Animated Gradient Background */
+/* Clean Subtle Background Pattern */
 body::before {
   content: '';
   position: fixed;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: 
-    radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.12) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.12) 0%, transparent 50%),
-    radial-gradient(circle at 40% 20%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 60% 70%, rgba(59, 130, 246, 0.08) 0%, transparent 40%);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 25px 25px, rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+    radial-gradient(circle at 75px 75px, rgba(236, 72, 153, 0.02) 1px, transparent 1px);
+  background-size: 100px 100px;
   pointer-events: none;
   z-index: 0;
-  animation: meshMove 25s ease-in-out infinite alternate;
-}
-
-@keyframes meshMove {
-  0% { transform: translate(0, 0) rotate(0deg); }
-  100% { transform: translate(50px, 50px) rotate(10deg); }
+  opacity: 0.5;
 }
 
 /* Make content above background */
@@ -639,128 +633,118 @@ div[class*="rounded"][class*="border"]:not([class*="input"]):not([class*="button
 
 
 /* ===========================
-   PREMIUM CARD STYLES
+   PREMIUM CARD STYLES - CLEAN VERSION
    =========================== */
 
-/* Modern Gradient Cards with Glassmorphism */
+/* Base Card - Clean White with Subtle Shadow */
 .dashboard-card {
-  background: rgba(255, 255, 255, 0.9) !important;
-  backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
-  border-radius: 24px !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  border-radius: 16px !important;
   box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.08),
-    0 2px 8px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  animation: fadeIn 0.6s ease-out !important;
+    0 1px 3px rgba(0, 0, 0, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.04) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  animation: fadeIn 0.5s ease-out !important;
   overflow: hidden !important;
   position: relative !important;
-}
-
-.dashboard-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.dashboard-card:hover::before {
-  opacity: 1;
 }
 
 .dashboard-card:hover {
-  transform: translateY(-8px) scale(1.02) !important;
+  transform: translateY(-4px) !important;
   box-shadow: 
-    0 20px 48px rgba(99, 102, 241, 0.15),
-    0 8px 16px rgba(99, 102, 241, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+    0 10px 20px rgba(0, 0, 0, 0.08),
+    0 4px 8px rgba(0, 0, 0, 0.04) !important;
+  border-color: rgba(99, 102, 241, 0.3) !important;
 }
 
-/* Gradient Stat Cards */
+/* Gradient Stat Cards - Vibrant but Balanced */
 .stat-card-1 {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
   color: white !important;
   border: none !important;
   box-shadow: 
-    0 8px 32px rgba(102, 126, 234, 0.35),
-    0 2px 8px rgba(102, 126, 234, 0.2) !important;
+    0 4px 14px rgba(99, 102, 241, 0.25),
+    0 2px 6px rgba(99, 102, 241, 0.15) !important;
+  border-radius: 16px !important;
+  padding: 24px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
 }
 
 .stat-card-2 {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+  background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%) !important;
   color: white !important;
   border: none !important;
   box-shadow: 
-    0 8px 32px rgba(79, 172, 254, 0.35),
-    0 2px 8px rgba(79, 172, 254, 0.2) !important;
+    0 4px 14px rgba(6, 182, 212, 0.25),
+    0 2px 6px rgba(6, 182, 212, 0.15) !important;
+  border-radius: 16px !important;
+  padding: 24px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
 }
 
 .stat-card-3 {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%) !important;
+  background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%) !important;
   color: white !important;
   border: none !important;
   box-shadow: 
-    0 8px 32px rgba(67, 233, 123, 0.35),
-    0 2px 8px rgba(67, 233, 123, 0.2) !important;
-}
-
-.stat-card-4 {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%) !important;
-  color: white !important;
-  border: none !important;
-  box-shadow: 
-    0 8px 32px rgba(250, 112, 154, 0.35),
-    0 2px 8px rgba(250, 112, 154, 0.2) !important;
-}
-
-.stat-card-1,
-.stat-card-2,
-.stat-card-3,
-.stat-card-4 {
-  border-radius: 20px !important;
+    0 4px 14px rgba(16, 185, 129, 0.25),
+    0 2px 6px rgba(16, 185, 129, 0.15) !important;
+  border-radius: 16px !important;
   padding: 24px !important;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   position: relative !important;
   overflow: hidden !important;
-  animation: slideUp 0.6s ease-out !important;
 }
 
-.stat-card-1::after,
-.stat-card-2::after,
-.stat-card-3::after,
-.stat-card-4::after {
+.stat-card-4 {
+  background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%) !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: 
+    0 4px 14px rgba(245, 158, 11, 0.25),
+    0 2px 6px rgba(245, 158, 11, 0.15) !important;
+  border-radius: 16px !important;
+  padding: 24px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* Subtle shine effect on hover */
+.stat-card-1::before,
+.stat-card-2::before,
+.stat-card-3::before,
+.stat-card-4::before {
   content: '';
   position: absolute;
-  top: -50%;
-  right: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
-  opacity: 0;
-  transition: opacity 0.4s ease;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  transition: left 0.5s ease;
 }
 
-.stat-card-1:hover::after,
-.stat-card-2:hover::after,
-.stat-card-3:hover::after,
-.stat-card-4:hover::after {
-  opacity: 1;
+.stat-card-1:hover::before,
+.stat-card-2:hover::before,
+.stat-card-3:hover::before,
+.stat-card-4:hover::before {
+  left: 100%;
 }
 
 .stat-card-1:hover,
 .stat-card-2:hover,
 .stat-card-3:hover,
 .stat-card-4:hover {
-  transform: translateY(-10px) scale(1.03) !important;
+  transform: translateY(-6px) !important;
   box-shadow: 
-    0 24px 48px rgba(99, 102, 241, 0.4),
-    0 8px 16px rgba(99, 102, 241, 0.3) !important;
+    0 12px 24px rgba(99, 102, 241, 0.3),
+    0 6px 12px rgba(99, 102, 241, 0.2) !important;
 }
 
 .stat-card-1 *,
@@ -908,31 +892,28 @@ div[class*="rounded"][class*="border"]:not([class*="input"]):not([class*="button
 }
 
 /* ===========================
-   STUDENT DASHBOARD SPECIFIC
+   STUDENT DASHBOARD - CLEAN & MODERN
    =========================== */
 
 .bill-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
   color: white !important;
-  border-radius: 24px !important;
-  padding: 32px !important;
+  border-radius: 20px !important;
+  padding: 28px !important;
   box-shadow: 
-    0 12px 40px rgba(102, 126, 234, 0.4),
-    0 4px 12px rgba(102, 126, 234, 0.2) !important;
-  animation: slideUp 0.6s ease-out !important;
+    0 8px 20px rgba(99, 102, 241, 0.3),
+    0 3px 8px rgba(99, 102, 241, 0.15) !important;
+  animation: slideUp 0.5s ease-out !important;
   position: relative !important;
   overflow: hidden !important;
+  transition: all 0.3s ease !important;
 }
 
-.bill-card::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-  animation: rotate 20s linear infinite;
+.bill-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 
+    0 12px 28px rgba(99, 102, 241, 0.35),
+    0 6px 12px rgba(99, 102, 241, 0.2) !important;
 }
 
 .bill-card * {
@@ -942,27 +923,24 @@ div[class*="rounded"][class*="border"]:not([class*="input"]):not([class*="button
 }
 
 .balance-card {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+  background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%) !important;
   color: white !important;
-  border-radius: 24px !important;
-  padding: 32px !important;
+  border-radius: 20px !important;
+  padding: 28px !important;
   box-shadow: 
-    0 12px 40px rgba(240, 147, 251, 0.4),
-    0 4px 12px rgba(240, 147, 251, 0.2) !important;
-  animation: slideUp 0.7s ease-out !important;
+    0 8px 20px rgba(236, 72, 153, 0.3),
+    0 3px 8px rgba(236, 72, 153, 0.15) !important;
+  animation: slideUp 0.6s ease-out !important;
   position: relative !important;
   overflow: hidden !important;
+  transition: all 0.3s ease !important;
 }
 
-.balance-card::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-  animation: rotate 25s linear infinite reverse;
+.balance-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 
+    0 12px 28px rgba(236, 72, 153, 0.35),
+    0 6px 12px rgba(236, 72, 153, 0.2) !important;
 }
 
 .balance-card * {
@@ -973,30 +951,37 @@ div[class*="rounded"][class*="border"]:not([class*="input"]):not([class*="button
 
 /* Summary Grid for Student Dashboard */
 .summary-grid article:nth-child(1) {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+  background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%) !important;
   color: white !important;
-  border-radius: 20px !important;
-  padding: 24px !important;
-  box-shadow: 0 8px 32px rgba(79, 172, 254, 0.35) !important;
-  animation: scaleIn 0.6s ease-out !important;
+  border-radius: 16px !important;
+  padding: 20px !important;
+  box-shadow: 0 4px 14px rgba(6, 182, 212, 0.25) !important;
+  animation: scaleIn 0.5s ease-out !important;
+  transition: all 0.3s ease !important;
 }
 
 .summary-grid article:nth-child(2) {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%) !important;
+  background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%) !important;
   color: white !important;
-  border-radius: 20px !important;
-  padding: 24px !important;
-  box-shadow: 0 8px 32px rgba(67, 233, 123, 0.35) !important;
-  animation: scaleIn 0.7s ease-out !important;
+  border-radius: 16px !important;
+  padding: 20px !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25) !important;
+  animation: scaleIn 0.6s ease-out !important;
+  transition: all 0.3s ease !important;
 }
 
 .summary-grid article:nth-child(3) {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%) !important;
+  background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%) !important;
   color: white !important;
-  border-radius: 20px !important;
-  padding: 24px !important;
-  box-shadow: 0 8px 32px rgba(250, 112, 154, 0.35) !important;
-  animation: scaleIn 0.8s ease-out !important;
+  border-radius: 16px !important;
+  padding: 20px !important;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25) !important;
+  animation: scaleIn 0.7s ease-out !important;
+  transition: all 0.3s ease !important;
+}
+
+.summary-grid article:hover {
+  transform: translateY(-4px) !important;
 }
 
 .summary-grid article * {
