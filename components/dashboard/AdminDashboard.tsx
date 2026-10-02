@@ -117,7 +117,7 @@ export default function AdminDashboard() {
     <div className="min-h-screen" style={{background: 'linear-gradient(to bottom, #ffffff 0%, #f8fafc 100%)'}}>
       {/* Header */}
       <div className="border-b bg-white" style={{boxShadow: '0 1px 3px rgba(0,0,0,0.06)'}}>
-        <div className="container mx-auto px-4 py-4">
+        <div className="mx-auto max-w-7xl px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-blue-900">Dashboard Admin</h1>
@@ -137,7 +137,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="mx-auto max-w-7xl px-4 py-8">
         {/* Quick Stats */}
         {loading ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
