@@ -12,15 +12,21 @@ export async function POST(req: Request) {
       )
     }
 
-    // Cek apakah user ada
-    const user = await prisma.user.findFirst({
-      where: {
-        OR: [
-          { email: email },
-          { nim: email }
-        ]
-      }
+    // Cek apakah user ada berdasarkan email atau cari student berdasarkan NIM
+    let user = await prisma.user.findFirst({
+      where: { email: email }
     })
+
+    // Jika tidak ditemukan di User, coba cari di Student berdasarkan NIM
+    if (!user) {
+      const student = await prisma.student.findFirst({
+        where: { nim: email },
+        include: { user: true }
+      })
+      if (student) {
+        user = student.user
+      }
+    }
 
     // Untuk keamanan, selalu return success meskipun user tidak ditemukan
     // Ini mencegah enumeration attack
