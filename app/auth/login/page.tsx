@@ -59,7 +59,7 @@ function LoginForm() {
         {/* Heading */}
         <div className={styles.heading}>
           <h1>Masuk ke Akun</h1>
-          <p>Sistem Kas Kelas TI26A3</p>
+          <p>Sistem Kas Kelas TI26A3 - UDB</p>
         </div>
 
         {/* Success Message */}
