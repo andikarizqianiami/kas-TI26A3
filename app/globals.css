@@ -36,11 +36,20 @@
   --gradient-6: linear-gradient(135deg, #667eea 30%, #764ba2 100%);
 }
 
-* { 
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-} 
+/*
+ * Element resets live in @layer base on purpose. Tailwind v4 puts every
+ * utility in @layer utilities, and unlayered rules always beat layered ones,
+ * so an unlayered `* { margin: 0; padding: 0 }` silently disables mx-auto,
+ * p-6, space-y-*, etc. Class-based custom styles below stay unlayered and
+ * still override these resets.
+ */
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+}
 
 html { 
   scroll-behavior: smooth;
@@ -80,16 +89,18 @@ main {
   z-index: 1;
 } 
 
-a { 
-  color: inherit;
-  text-decoration: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-} 
+@layer base {
+  a {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
-button, input { 
-  font: inherit;
-  border: none;
-  outline: none;
+  button, input {
+    font: inherit;
+    border: none;
+    outline: none;
+  }
 }
 
 /* ===== ANIMASI MODERN ===== */
@@ -578,6 +589,32 @@ button, input {
 .auth-security,.form-success { display:flex;align-items:center;gap:7px;color:#718099;font-size:11px;font-weight:650; }.auth-security { justify-content:center;margin:17px 0 -3px; }.auth-security svg,.form-success svg { color:#198a5c; }.form-success { padding:11px 13px;border:1px solid #bde7d2;border-radius:9px;background:#f1fcf6;color:#18754e;font-size:12px; }
 @media(max-width:520px) { .form-columns { grid-template-columns:1fr;gap:18px; }.auth-heading h2 { font-size:29px; } }
 
+/* Password field with show/hide toggle (components/ui/password-field.tsx) */
+.form-field { display:grid;gap:7px; }
+.password-field { position:relative; }
+.password-field .input { padding-right:46px; }
+.password-field .input::-ms-reveal,
+.password-field .input::-ms-clear { display:none; } /* avoid a second eye icon in Edge */
+/* Two-class selectors so these beat the global `button:hover { transform … !important }` */
+.password-field .password-toggle {
+  position:absolute;
+  top:50%;
+  right:5px;
+  display:grid;
+  place-items:center;
+  width:36px;
+  height:36px;
+  border-radius:8px;
+  color:#64748b;
+  background:transparent;
+  cursor:pointer;
+  transform:translateY(-50%) !important;
+}
+.password-field .password-toggle:hover:not(:disabled) { color:#3159dc;background:#eef2ff; }
+.password-field .password-toggle:disabled { cursor:not-allowed;opacity:.5; }
+/* The input lifts 2px while focused (.input:focus); move the toggle with it */
+.password-field:has(.input:focus) .password-toggle { transform:translateY(calc(-50% - 2px)) !important; }
+
 
 /* ===== COLORFUL CARDS - UNIVERSAL APPROACH ===== */
 
@@ -1038,17 +1075,8 @@ div[class*="rounded"][class*="border"]:not([class*="input"]):not([class*="button
    CHARTS & CONTAINERS
    =========================== */
 
-/* Chart Cards */
-.recharts-wrapper {
-  background: white !important;
-  border-radius: 12px !important;
-  padding: 16px !important;
-}
-
-/* Chart Container Styling */
-.dashboard-card .recharts-wrapper {
-  border-radius: 8px !important;
-}
+/* Chart cards get their spacing from the card itself. Do not pad
+   .recharts-wrapper: Recharts sizes it explicitly and padding offsets the plot. */
 
 /* Modern Card Containers */
 .card,
@@ -1107,8 +1135,9 @@ div[class*="rounded"][class*="border"]:not([class*="input"]):not([class*="button
   color: #334155;
 }
 
-/* Header Styling */
-.bg-white {
+/* Header Styling (scoped to header bars: a bare `.bg-white !important`
+   would beat every other background, e.g. the .stat-card gradients) */
+.border-b.bg-white {
   background: white !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
 }
@@ -1127,27 +1156,12 @@ div[class*="rounded"][class*="border"]:not([class*="input"]):not([class*="button
   gap: 1.5rem !important;
 }
 
-/* Responsive Grid */
-@media (min-width: 768px) {
-  .md\\:grid-cols-2 {
-    grid-template-columns: repeat(2, 1fr) !important;
+/* Text Improvements (base layer so text-* / font-* utilities can override) */
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    color: #0f172a;
   }
-}
-
-@media (min-width: 1024px) {
-  .lg\\:grid-cols-4 {
-    grid-template-columns: repeat(4, 1fr) !important;
-  }
-  
-  .lg\\:grid-cols-3 {
-    grid-template-columns: repeat(3, 1fr) !important;
-  }
-}
-
-/* Text Improvements */
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 700;
-  color: #0f172a;
 }
 
 .text-gray-600 {
@@ -1187,21 +1201,6 @@ button:hover {
   border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
 }
 
-/* Spacing Utilities */
-.py-8 {
-  padding-top: 2rem !important;
-  padding-bottom: 2rem !important;
-}
-
-.px-4 {
-  padding-left: 1rem !important;
-  padding-right: 1rem !important;
-}
-
-.mb-8 {
-  margin-bottom: 2rem !important;
-}
-
 /* Chart Colors */
 .recharts-line {
   stroke-width: 3 !important;
@@ -1213,4 +1212,209 @@ button:hover {
 
 .recharts-bar:hover {
   opacity: 1 !important;
+}
+
+/* ===========================
+   Design system theme: kas
+   Generated by the design-system-scaffold "Generate a New Theme" workflow.
+   Source of truth: themes/kas.md (keep the two in sync).
+   No effect until shadcn's `@theme inline` mapping exists and `theme-kas`
+   is on <html>. Add `dark` next to it for dark mode.
+   =========================== */
+.theme-kas {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.208 0.04 265.755);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.208 0.04 265.755);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.208 0.04 265.755);
+  --primary: oklch(0.511 0.23 276.966);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.962 0.018 272.314);
+  --secondary-foreground: oklch(0.511 0.23 276.966);
+  --muted: oklch(0.984 0.003 247.858);
+  --muted-foreground: oklch(0.554 0.041 257.417);
+  --accent: oklch(0.962 0.018 272.314);
+  --accent-foreground: oklch(0.511 0.23 276.966);
+  --destructive: oklch(0.577 0.215 27.325);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.929 0.013 255.508);
+  --input: oklch(0.929 0.013 255.508);
+  --ring: oklch(0.585 0.204 277.117);
+  --chart-1: oklch(0.623 0.188 259.815);
+  --chart-2: oklch(0.723 0.192 149.579);
+  --chart-3: oklch(0.769 0.165 69.88);
+  --chart-4: oklch(0.637 0.208 25.331);
+  --chart-5: oklch(0.606 0.219 292.717);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.theme-kas.dark {
+  --background: oklch(0.129 0.041 264.695);
+  --foreground: oklch(0.984 0.003 247.858);
+  --card: oklch(0.208 0.04 265.755);
+  --card-foreground: oklch(0.984 0.003 247.858);
+  --popover: oklch(0.279 0.037 260.031);
+  --popover-foreground: oklch(0.984 0.003 247.858);
+  --primary: oklch(0.68 0.158 276.935);
+  --primary-foreground: oklch(0.129 0.041 264.695);
+  --secondary: oklch(0.257 0.086 281.288);
+  --secondary-foreground: oklch(0.87 0.062 274.039);
+  --muted: oklch(0.279 0.037 260.031);
+  --muted-foreground: oklch(0.711 0.035 256.788);
+  --accent: oklch(0.359 0.135 278.697);
+  --accent-foreground: oklch(0.87 0.062 274.039);
+  --destructive: oklch(0.711 0.166 22.216);
+  --destructive-foreground: oklch(0.129 0.041 264.695);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.68 0.158 276.935);
+  --chart-1: oklch(0.623 0.188 259.815);
+  --chart-2: oklch(0.723 0.192 149.579);
+  --chart-3: oklch(0.769 0.165 69.88);
+  --chart-4: oklch(0.637 0.208 25.331);
+  --chart-5: oklch(0.606 0.219 292.717);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.439 0 0);
+}
+
+/* Entry screen: a restrained ledger inspired palette, with no decorative motion. */
+.simple-login-page {
+  display: grid;
+  min-height: 100svh;
+  padding: clamp(18px, 4vw, 56px);
+  place-items: center;
+  background: #f3f2ed;
+}
+.login-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(400px, .82fr);
+  width: min(1120px, 100%);
+  min-height: min(680px, calc(100svh - 48px));
+  overflow: hidden;
+  border: 1px solid #e4e2d9;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 18px 55px rgba(31, 42, 35, .07);
+}
+.login-story {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(28px, 5vw, 58px);
+  color: #f7f7f2;
+  background: #183c32;
+}
+.login-wordmark { display: inline-flex; align-items: center; gap: 12px; width: fit-content; }
+.login-wordmark-icon { display: grid; width: 46px; height: 46px; place-items: center; border-radius: 10px; background: #fff; }
+.login-wordmark-icon img { object-fit: contain; }
+.login-wordmark strong,.login-wordmark small { display: block; }
+.login-wordmark strong { color: #fff; font-size: 14px; letter-spacing: .02em; }
+.login-wordmark small { margin-top: 4px; color: #b7c8c0; font-size: 11px; }
+.login-story-copy { width: min(450px, 100%); margin-block: 54px; }
+.login-overline { color: #688274; font-size: 11px; font-weight: 750; letter-spacing: .09em; text-transform: uppercase; }
+.login-story .login-overline { color: #b5c9bd; }
+.login-story h1 { max-width: 430px; margin-top: 14px; color: #fff; font-size: clamp(35px, 4.3vw, 53px); font-weight: 600; letter-spacing: -.055em; line-height: 1.07; }
+.login-story-copy > p:not(.login-overline) { max-width: 390px; margin-top: 18px; color: #d0ddd6; font-size: 14px; line-height: 1.75; }
+.login-receipt { margin-top: 40px; padding: 17px 19px; border: 1px solid rgba(220, 233, 224, .2); border-radius: 10px; background: rgba(255,255,255,.045); }
+.login-receipt-head,.login-receipt-line { display: flex; align-items: center; justify-content: space-between; }
+.login-receipt-head { padding-bottom: 12px; border-bottom: 1px solid rgba(220,233,224,.18); color: #b8c9c0; font-size: 9px; font-weight: 750; letter-spacing: .08em; }
+.login-receipt-line { gap: 12px; padding-top: 12px; color: #f1f4f0; font-size: 11px; }
+.login-receipt-line span:first-child { display: flex; align-items: center; gap: 8px; }
+.login-receipt-line svg { color: #a9c4a9; }
+.login-receipt-line span:last-child { color: #9eb2a6; font-variant-numeric: tabular-nums; }
+.login-story-foot { color: #b7c8c0; font-size: 11px; }
+.login-form-side { display: flex; flex-direction: column; justify-content: center; padding: clamp(28px, 6vw, 76px); }
+.simple-login-card { width: min(100%, 370px); margin-inline: auto; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+.simple-login-heading { margin: 0 0 30px; }
+.simple-login-heading h2 { margin-top: 11px; color: #1e2a24; font-size: 30px; font-weight: 600; letter-spacing: -.045em; }
+.simple-login-heading > p:last-child { margin-top: 8px; color: #7a817b; font-size: 13px; }
+.simple-login-form { display: grid; gap: 19px; }
+.simple-login-form label,.simple-login-form .form-field { display: grid; gap: 8px; color: #3b4941; font-size: 12px; font-weight: 650; }
+.simple-login-form .input { min-height: 47px; padding-inline: 13px; border-color: #dcded8; border-radius: 7px; font-size: 13px; box-shadow: none; }
+.simple-login-form .input:focus { border-color: #426858; box-shadow: 0 0 0 3px rgba(66,104,88,.12); transform: none; }
+.simple-login-submit { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 48px; margin-top: 2px; border-radius: 7px; color: #fff; background: #234b3c; font-size: 13px; font-weight: 700; cursor: pointer; transition: background .16s ease; }
+.simple-login-submit:hover:not(:disabled) { background: #183c32; }
+.simple-login-submit:disabled { opacity: .65; cursor: wait; }
+.simple-login-register { margin: 24px 0 0; color: #747c76; font-size: 12px; text-align: center; }
+.simple-login-register a { color: #285743; font-weight: 750; }
+.login-secure-note { display: flex; justify-content: center; align-items: center; gap: 7px; margin-top: 38px; color: #8b918c; font-size: 10px; }
+.simple-login-footer { margin: 28px auto 0; color: #929690; font-size: 10px; text-align: center; }
+.simple-login-footer span { padding-inline: 4px; color: #bdc1ba; }
+
+/* Bring the student view back to calm, readable surfaces. */
+.student-dashboard { color: #202b25; background: #f5f6f2; }
+.student-dashboard::before { display: none; }
+.student-topbar { background: #fff; border-bottom: 1px solid #e5e8e1; box-shadow: none; }
+.student-brand span { border-radius: 8px; color: #fff; background: #234b3c; }
+.student-content { max-width: 1120px; }
+.student-welcome h1 { color: #202b25; }
+.bill-card,.balance-card,.dashboard-panel,.summary-grid article { border: 1px solid #e4e7e0; border-radius: 10px; box-shadow: none; animation: none; }
+.bill-card { color: #29372f; background: #fff; }
+.bill-card::before,.dashboard-panel::before { display: none; }
+.bill-card h2 { color: #20392d; }
+.balance-card { color: #24382d; background: #e8eee8; }
+.balance-card p,.balance-card > span { color: #68776d; }
+.balance-card h2 { color: #234b3c; }
+.summary-grid article:nth-child(1),.summary-grid article:nth-child(2),.summary-grid article:nth-child(3) { color: #28352d; background: #fff; border: 1px solid #e4e7e0; }
+.summary-grid p,.summary-grid strong,.summary-grid span { color: #28352d; }
+.summary-grid p { color: #758078; }
+.summary-grid span { color: #8a928b; }
+.dashboard-panel { background: #fff; }
+.panel-heading h2 { color: #29372f; }
+.payment-icon { color: #285743; background: #edf2ed; }
+
+/* Keep the dedicated sign-in route and admin summaries in the same visual family. */
+.auth-page { background: #f3f2ed; }
+.auth-panel { background: #183c32; animation: none; }
+.auth-panel::after { animation: none; }
+.auth-logo { border-radius: 10px; box-shadow: none; }
+.auth-form-card { max-width: 440px; }
+.auth-heading h2 { color: #202b25; font-weight: 600; }
+.auth-heading p { color: #778078; }
+.auth-submit.button-primary { background: #234b3c; border-radius: 7px; box-shadow: none; }
+.auth-submit.button-primary:hover:not(:disabled) { background: #183c32; transform: none; box-shadow: none; }
+.auth-submit.button-primary::before { display: none; }
+.auth-switch a { color: #285743; }
+.stat-card-1,.stat-card-2,.stat-card-3,.stat-card-4 {
+  color: #28352d !important;
+  border: 1px solid #e1e6df !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  box-shadow: none !important;
+  transition: border-color .16s ease !important;
+}
+.stat-card-1:hover,.stat-card-2:hover,.stat-card-3:hover,.stat-card-4:hover { transform: none !important; border-color: #aabbb0 !important; box-shadow: none !important; }
+.stat-card-1::before,.stat-card-2::before,.stat-card-3::before,.stat-card-4::before { display: none; }
+.stat-card-1 *,.stat-card-2 *,.stat-card-3 *,.stat-card-4 * { color: #28352d !important; }
+
+@media (max-width: 760px) {
+  .simple-login-page { padding: 0; background: #fff; }
+  .login-shell { grid-template-columns: 1fr; min-height: 100svh; border: 0; border-radius: 0; box-shadow: none; }
+  .login-story { min-height: 235px; padding: 24px; }
+  .login-story-copy { margin: 30px 0 0; }
+  .login-story h1 { max-width: 400px; font-size: 34px; }
+  .login-story-copy > p:not(.login-overline) { margin-top: 10px; font-size: 12px; }
+  .login-receipt,.login-story-foot { display: none; }
+  .login-form-side { justify-content: flex-start; padding: 38px 24px 24px; }
+  .login-secure-note { margin-top: 27px; }
+}
+@media (max-width: 420px) {
+  .login-story { min-height: 216px; }
+  .login-story h1 { font-size: 30px; }
+  .login-form-side { padding-inline: 22px; }
 }
