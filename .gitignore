@@ -39,6 +39,7 @@ yarn-error.log*
 !DEPLOYMENT_CHECKLIST.md
 !CUSTOM_DOMAIN_SETUP.md
 !MAC_AS_SERVER_GUIDE.md
+!TROUBLESHOOTING.md
 
 # local credential notes (never commit passwords)
 LOGIN_CREDENTIALS*.md
