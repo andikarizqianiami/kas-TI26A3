@@ -1,10 +1,9 @@
 import { NextAuthConfig } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { prisma } from '@/lib/prisma/db'
-import { verifyPassword } from './hash'
+import bcrypt from 'bcryptjs'
 
 export const authConfig: NextAuthConfig = {
-  // Note: Tidak pakai PrismaAdapter karena kita pakai JWT session, bukan database session
   providers: [
     CredentialsProvider({
       name: 'credentials',
@@ -13,61 +12,50 @@ export const authConfig: NextAuthConfig = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        // Invalid logins return null so Auth.js raises CredentialsSignin. Throwing a plain
-        // Error is treated as a server error, and in debug mode (development) Auth.js then
-        // logs the whole submitted form, including the password, to the terminal.
-        const rejectLogin = (reason: string) => {
-          console.warn(`[auth] Login gagal: ${reason}`)
-          return null
-        }
+        try {
+          const rawIdentifier = credentials?.email
+          const password = credentials?.password
+          
+          if (!rawIdentifier || !password || typeof rawIdentifier !== 'string' || typeof password !== 'string') {
+            return null
+          }
 
-        const rawIdentifier = credentials?.email
-        const password = credentials?.password
-        if (typeof rawIdentifier !== 'string' || typeof password !== 'string' || !password) {
-          return rejectLogin('email/NIM atau password kosong')
-        }
-
-        // Text copied from chat or docs often carries surrounding spaces or a
-        // sentence-ending period ("...udb.ac.id."); neither can be part of an email or NIM
-        const identifier = rawIdentifier.trim().replace(/\.+$/, '')
-        if (!identifier) {
-          return rejectLogin('email/NIM atau password kosong')
-        }
-
-        // Find user by email or NIM
-        let user = await prisma.user.findUnique({
-          where: { email: identifier.toLowerCase() },
-          include: { student: true },
-        })
-
-        // If not found by email, try to find by NIM
-        if (!user) {
-          const student = await prisma.student.findUnique({
-            where: { nim: identifier },
-            include: { user: true },
+          const identifier = rawIdentifier.trim().replace(/\.+$/, '')
+          
+          // Find user by email
+          let user = await prisma.user.findUnique({
+            where: { email: identifier.toLowerCase() },
+            include: { student: true },
           })
-          user = student?.user ? { ...student.user, student } : null
-        }
 
-        if (!user) {
-          return rejectLogin('email atau NIM tidak ditemukan')
-        }
+          // If not found by email, try NIM
+          if (!user) {
+            const student = await prisma.student.findUnique({
+              where: { nim: identifier },
+              include: { user: true },
+            })
+            user = student?.user ? { ...student.user, student } : null
+          }
 
-        if (!user.isActive) {
-          return rejectLogin('akun tidak aktif')
-        }
+          if (!user || !user.isActive) {
+            return null
+          }
 
-        const isValid = await verifyPassword(password, user.password)
-        if (!isValid) {
-          return rejectLogin('password salah')
-        }
+          const isValid = await bcrypt.compare(password, user.password)
+          if (!isValid) {
+            return null
+          }
 
-        return {
-          id: user.id,
-          email: user.email,
-          role: user.role,
-          name: user.student?.name || user.email,
-          studentId: user.student?.id,
+          return {
+            id: user.id,
+            email: user.email,
+            role: user.role,
+            name: user.student?.name || user.email,
+            studentId: user.student?.id,
+          }
+        } catch (error) {
+          console.error('[Auth Error]:', error)
+          return null
         }
       },
     }),
