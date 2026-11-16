@@ -4,15 +4,153 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { ArrowLeft, CheckCircle2, LoaderCircle, ShieldCheck } from 'lucide-react'
+import { CheckCircle2, LoaderCircle, Eye, EyeOff } from 'lucide-react'
 import { FormEvent, useState, Suspense } from 'react'
-import { PasswordField } from '@/components/ui/password-field'
+import styles from './login.module.css'
 
 function LoginForm() {
-  const router = useRouter(); const searchParams = useSearchParams()
-  const [email, setEmail] = useState(''); const [password, setPassword] = useState(''); const [error, setError] = useState(''); const [loading, setLoading] = useState(false)
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); setError(''); setLoading(true); try { const result = await signIn('credentials', { email, password, redirect: false }); if (result?.error) setError('Email, NIM, atau password belum tepat.'); else { router.push('/dashboard'); router.refresh() } } catch { setError('Terjadi kesalahan. Silakan coba lagi.') } finally { setLoading(false) } }
-  return <main className="auth-page"><section className="auth-panel auth-intro"><Link href="/" className="auth-back"><ArrowLeft size={16} /> Kembali ke beranda</Link><div className="auth-intro-content"><span className="auth-logo"><Image src="/assets/logo-udb.png" alt="Logo Universitas Duta Bangsa" width={72} height={72} priority /></span><p className="auth-eyebrow">KAS TI26A3</p><h1>Semua catatan kas, ada di genggaman.</h1><p>Masuk untuk memeriksa tagihan, mengunggah bukti pembayaran, dan mengikuti perkembangan kas kelas.</p><ul><li><CheckCircle2 size={18} /> Tagihan dan riwayat pembayaran</li><li><CheckCircle2 size={18} /> Status verifikasi yang jelas</li><li><CheckCircle2 size={18} /> Informasi kas kelas terkini</li></ul></div></section><section className="auth-form-wrap"><div className="auth-form-card auth-login-card"><div className="auth-mobile-brand"><Image src="/assets/logo-udb.png" alt="" width={38} height={38} /><strong>KAS TI26A3</strong></div><div className="auth-heading"><h2>Selamat datang</h2><p>Masuk untuk melanjutkan ke kas kelasmu.</p></div><form onSubmit={handleSubmit} className="register-form">{searchParams.get('registered') === 'true' && <div className="form-success"><CheckCircle2 size={17} /> Akun berhasil dibuat. Silakan masuk.</div>}{error && <div className="form-alert" role="alert">{error}</div>}<label>Email atau NIM<input type="text" className="input" placeholder="nama@student.udb.ac.id atau NIM" value={email} onChange={(e) => setEmail(e.target.value)} required disabled={loading} autoComplete="username" /></label><PasswordField label="Password" placeholder="Masukkan password" value={password} onChange={(e) => setPassword(e.target.value)} required disabled={loading} autoComplete="current-password" /><button type="submit" className="button button-primary auth-submit" disabled={loading}>{loading ? <><LoaderCircle className="spin" size={17} /> Memeriksa akun...</> : 'Masuk ke dashboard'}</button></form><p className="auth-security"><ShieldCheck size={15} /> Data akun Anda diproses secara aman.</p><p className="auth-switch">Belum punya akun? <Link href="/auth/register">Daftar sekarang</Link></p></div></section></main>
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setError('')
+    setLoading(true)
+
+    try {
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false
+      })
+
+      if (result?.error) {
+        setError('Email, NIM, atau password belum tepat.')
+      } else {
+        router.push('/dashboard')
+        router.refresh()
+      }
+    } catch {
+      setError('Terjadi kesalahan. Silakan coba lagi.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className={styles.loginContainer}>
+      <div className={styles.loginCard}>
+        {/* Logo UDB */}
+        <div className={styles.logoContainer}>
+          <Image
+            src="/assets/logo-udb.png"
+            alt="Logo Universitas Duta Bangsa"
+            width={80}
+            height={80}
+            priority
+          />
+        </div>
+
+        {/* Heading */}
+        <div className={styles.heading}>
+          <h1>Masuk ke Akun</h1>
+          <p>Sistem Kas Kelas TI26A3</p>
+        </div>
+
+        {/* Success Message */}
+        {searchParams.get('registered') === 'true' && (
+          <div className={styles.successMessage}>
+            <CheckCircle2 size={17} />
+            Akun berhasil dibuat. Silakan masuk.
+          </div>
+        )}
+
+        {/* Error Message */}
+        {error && (
+          <div className={styles.errorMessage} role="alert">
+            {error}
+          </div>
+        )}
+
+        {/* Login Form */}
+        <form onSubmit={handleSubmit} className={styles.form}>
+          {/* Email atau NIM */}
+          <div className={styles.formGroup}>
+            <label htmlFor="email">Email atau NIM</label>
+            <input
+              id="email"
+              type="text"
+              placeholder="Masukkan email atau NIM"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={loading}
+              autoComplete="username"
+              className={styles.input}
+            />
+          </div>
+
+          {/* Password */}
+          <div className={styles.formGroup}>
+            <label htmlFor="password">Password</label>
+            <div className={styles.passwordWrapper}>
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Masukkan password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={loading}
+                autoComplete="current-password"
+                className={styles.input}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className={styles.togglePassword}
+                aria-label={showPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+          </div>
+
+          {/* Tombol Masuk */}
+          <button
+            type="submit"
+            className={styles.submitButton}
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <LoaderCircle className={styles.spinner} size={18} />
+                Memproses...
+              </>
+            ) : (
+              'Masuk'
+            )}
+          </button>
+        </form>
+
+        {/* Footer Links */}
+        <div className={styles.footer}>
+          <Link href="/auth/forgot-password" className={styles.forgotPassword}>
+            Lupa Password / Reset Password
+          </Link>
+          
+          <p className={styles.registerLink}>
+            Belum punya akun? <Link href="/auth/register">Daftar</Link>
+          </p>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default function LoginPage() {
