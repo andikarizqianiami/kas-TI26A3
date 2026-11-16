@@ -3,13 +3,12 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { signIn } from 'next-auth/react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { CheckCircle2, LoaderCircle, Eye, EyeOff } from 'lucide-react'
-import { FormEvent, useState, Suspense } from 'react'
+import { useRouter } from 'next/navigation'
+import { LoaderCircle, Eye, EyeOff } from 'lucide-react'
+import { FormEvent, useState } from 'react'
 
-function LoginForm() {
+export default function LoginPage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -78,24 +77,6 @@ function LoginForm() {
             Sistem Kas Kelas TI26A3 - UDB
           </p>
         </div>
-
-        {/* Success Message */}
-        {searchParams.get('registered') === 'true' && (
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '12px 16px',
-            background: '#d4edda',
-            color: '#155724',
-            borderRadius: '8px',
-            fontSize: '14px',
-            marginBottom: '24px'
-          }}>
-            <CheckCircle2 size={17} />
-            Akun berhasil dibuat. Silakan masuk.
-          </div>
-        )}
 
         {/* Error Message */}
         {error && (
@@ -260,13 +241,5 @@ function LoginForm() {
         }
       `}</style>
     </div>
-  )
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <LoginForm />
-    </Suspense>
   )
 }
