@@ -6,7 +6,6 @@ import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { CheckCircle2, LoaderCircle, Eye, EyeOff } from 'lucide-react'
 import { FormEvent, useState, Suspense } from 'react'
-import styles from './login.module.css'
 
 function LoginForm() {
   const router = useRouter()
@@ -43,10 +42,24 @@ function LoginForm() {
   }
 
   return (
-    <div className={styles.loginContainer}>
-      <div className={styles.loginCard}>
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'linear-gradient(135deg, #1e3a2e 0%, #2d5a45 100%)',
+      padding: '20px'
+    }}>
+      <div style={{
+        background: 'white',
+        borderRadius: '16px',
+        padding: '48px 40px',
+        width: '100%',
+        maxWidth: '440px',
+        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)'
+      }}>
         {/* Logo UDB */}
-        <div className={styles.logoContainer}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '32px' }}>
           <Image
             src="/assets/logo-udb.png"
             alt="Logo Universitas Duta Bangsa"
@@ -57,14 +70,28 @@ function LoginForm() {
         </div>
 
         {/* Heading */}
-        <div className={styles.heading}>
-          <h1>Masuk ke Akun</h1>
-          <p>Sistem Kas Kelas TI26A3 - UDB</p>
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <h1 style={{ fontSize: '28px', fontWeight: '700', color: '#1a1a1a', margin: '0 0 8px 0' }}>
+            Masuk ke Akun
+          </h1>
+          <p style={{ fontSize: '15px', color: '#666', margin: 0 }}>
+            Sistem Kas Kelas TI26A3 - UDB
+          </p>
         </div>
 
         {/* Success Message */}
         {searchParams.get('registered') === 'true' && (
-          <div className={styles.successMessage}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '12px 16px',
+            background: '#d4edda',
+            color: '#155724',
+            borderRadius: '8px',
+            fontSize: '14px',
+            marginBottom: '24px'
+          }}>
             <CheckCircle2 size={17} />
             Akun berhasil dibuat. Silakan masuk.
           </div>
@@ -72,16 +99,26 @@ function LoginForm() {
 
         {/* Error Message */}
         {error && (
-          <div className={styles.errorMessage} role="alert">
+          <div style={{
+            padding: '12px 16px',
+            background: '#f8d7da',
+            color: '#721c24',
+            borderRadius: '8px',
+            fontSize: '14px',
+            marginBottom: '24px',
+            border: '1px solid #f5c6cb'
+          }} role="alert">
             {error}
           </div>
         )}
 
         {/* Login Form */}
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           {/* Email atau NIM */}
-          <div className={styles.formGroup}>
-            <label htmlFor="email">Email atau NIM</label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <label htmlFor="email" style={{ fontSize: '14px', fontWeight: '600', color: '#333' }}>
+              Email atau NIM
+            </label>
             <input
               id="email"
               type="text"
@@ -91,14 +128,23 @@ function LoginForm() {
               required
               disabled={loading}
               autoComplete="username"
-              className={styles.input}
+              style={{
+                padding: '12px 16px',
+                fontSize: '15px',
+                border: '1.5px solid #ddd',
+                borderRadius: '8px',
+                width: '100%',
+                transition: 'all 0.2s ease'
+              }}
             />
           </div>
 
           {/* Password */}
-          <div className={styles.formGroup}>
-            <label htmlFor="password">Password</label>
-            <div className={styles.passwordWrapper}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <label htmlFor="password" style={{ fontSize: '14px', fontWeight: '600', color: '#333' }}>
+              Password
+            </label>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
               <input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
@@ -108,12 +154,30 @@ function LoginForm() {
                 required
                 disabled={loading}
                 autoComplete="current-password"
-                className={styles.input}
+                style={{
+                  padding: '12px 48px 12px 16px',
+                  fontSize: '15px',
+                  border: '1.5px solid #ddd',
+                  borderRadius: '8px',
+                  width: '100%',
+                  transition: 'all 0.2s ease'
+                }}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className={styles.togglePassword}
+                style={{
+                  position: 'absolute',
+                  right: '12px',
+                  background: 'none',
+                  border: 'none',
+                  color: '#666',
+                  cursor: 'pointer',
+                  padding: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
                 aria-label={showPassword ? 'Sembunyikan password' : 'Tampilkan password'}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -124,12 +188,27 @@ function LoginForm() {
           {/* Tombol Masuk */}
           <button
             type="submit"
-            className={styles.submitButton}
             disabled={loading}
+            style={{
+              padding: '14px 24px',
+              fontSize: '16px',
+              fontWeight: '600',
+              color: 'white',
+              background: loading ? '#999' : '#2d5a45',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              marginTop: '8px',
+              transition: 'all 0.2s ease'
+            }}
           >
             {loading ? (
               <>
-                <LoaderCircle className={styles.spinner} size={18} />
+                <LoaderCircle style={{ animation: 'spin 1s linear infinite' }} size={18} />
                 Memproses...
               </>
             ) : (
@@ -139,16 +218,47 @@ function LoginForm() {
         </form>
 
         {/* Footer Links */}
-        <div className={styles.footer}>
-          <Link href="/auth/forgot-password" className={styles.forgotPassword}>
+        <div style={{ marginTop: '24px', textAlign: 'center' }}>
+          <Link
+            href="/auth/forgot-password"
+            style={{
+              display: 'inline-block',
+              fontSize: '14px',
+              color: '#2d5a45',
+              textDecoration: 'none',
+              fontWeight: '500',
+              marginBottom: '16px'
+            }}
+          >
             Lupa Password / Reset Password
           </Link>
           
-          <p className={styles.registerLink}>
-            Belum punya akun? <Link href="/auth/register">Daftar</Link>
+          <p style={{ fontSize: '14px', color: '#666', margin: '16px 0 0 0' }}>
+            Belum punya akun?{' '}
+            <Link
+              href="/auth/register"
+              style={{
+                color: '#2d5a45',
+                textDecoration: 'none',
+                fontWeight: '600'
+              }}
+            >
+              Daftar
+            </Link>
           </p>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes spin {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+      `}</style>
     </div>
   )
 }
