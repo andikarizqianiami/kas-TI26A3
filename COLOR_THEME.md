@@ -191,9 +191,9 @@ All gradients use **135deg diagonal** for consistency:
 
 **Live URL:** https://kas-ti26a3-ten.vercel.app
 
-**Test Accounts:**
-- Admin: admin@ti26a3.udb.ac.id / Admin@TI26A3#2024
-- Bendahara: bendahara@ti26a3.udb.ac.id / Bendahara@TI26A3#2024
+**Akun:**
+- Admin: admin@ti26a3.udb.ac.id (password disimpan di password manager, tidak di repo)
+- Bendahara: bendahara@ti26a3.udb.ac.id (password disimpan di password manager, tidak di repo)
 
 ---
 

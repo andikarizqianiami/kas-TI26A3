@@ -7,7 +7,6 @@ Sistem Manajemen Kas Kelas - Teknik Informatika 26 A3
 - **Dashboard Mahasiswa**: Cek tagihan, bayar kas, upload bukti pembayaran
 - **Dashboard Admin/Bendahara**: Kelola mahasiswa, tagihan, verifikasi pembayaran, laporan keuangan
 - **Sistem Tagihan Otomatis**: Generate tagihan kas mingguan otomatis
-- **Target Urunan**: Fitur crowdfunding untuk kegiatan kelas
 - **Pembayaran QRIS**: Upload dan tampilkan QRIS untuk pembayaran
 - **Notifikasi**: Notifikasi tagihan dan update pembayaran
 - **Laporan Keuangan**: Pemasukan, pengeluaran, dan laporan mingguan
@@ -42,7 +41,10 @@ cp .env.example .env.local
 # Edit .env.local with your database URL
 # Then run migrations
 npx prisma migrate deploy
-npx prisma db seed
+
+# Seed butuh password awal admin & bendahara (min 12 karakter).
+# PERINGATAN: seed menghapus semua data di database tujuan.
+ADMIN_DEFAULT_PASSWORD='...' BENDAHARA_DEFAULT_PASSWORD='...' npx prisma db seed
 ```
 
 4. Run development server
@@ -59,9 +61,9 @@ Setelah seeding database, login dengan akun:
 - **Admin**: `admin@ti26a3.udb.ac.id`
 - **Bendahara**: `bendahara@ti26a3.udb.ac.id`
 
-**Password**: Hubungi administrator untuk mendapatkan password awal.
+**Password**: Diatur lewat `ADMIN_DEFAULT_PASSWORD` dan `BENDAHARA_DEFAULT_PASSWORD` saat seeding. Untuk mengganti password admin & bendahara (termasuk di produksi), jalankan `npx tsx scripts/fix-admin-bendahara.ts`; password diketik secara tersembunyi.
 
-⚠️ **PENTING**: Segera ganti password setelah login pertama kali!
+⚠️ **PENTING**: Jangan pernah menulis password di file yang di-commit (termasuk dokumen catatan login).
 
 ## 📝 License
 

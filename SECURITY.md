@@ -19,7 +19,17 @@ File berikut **TIDAK BOLEH** di-commit ke GitHub:
 - `.env`
 - `.env.local`
 - `.env.production`
+- Catatan login seperti `LOGIN_CREDENTIALS.md` (sudah masuk `.gitignore`)
 - Any file containing passwords, API keys, or secrets
+
+Script di `scripts/` membaca password lewat prompt tersembunyi dan NIM/email lewat argumen, jadi tidak ada kredensial yang ditulis di kode.
+
+### Jika kredensial terlanjur ter-commit
+
+1. Anggap kredensial itu sudah bocor, walaupun file-nya sudah dihapus (riwayat git dan fork tetap menyimpannya).
+2. Ganti password akun terkait: `DATABASE_URL="<url produksi>" npx tsx scripts/fix-admin-bendahara.ts`.
+3. Ganti `NEXTAUTH_SECRET` di Vercel lalu redeploy agar sesi lama (JWT, berlaku 30 hari) tidak bisa dipakai lagi.
+4. Periksa tabel `audit_logs` untuk aktivitas yang tidak dikenal.
 
 ### 3. Password Policy
 

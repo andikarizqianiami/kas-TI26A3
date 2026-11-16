@@ -1,42 +1,34 @@
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
+import { promptHidden, requireArg } from './lib/cli'
+
+// Checks whether a password matches a student's account.
+// Usage: npx tsx scripts/test-student-password.ts <NIM>   (password diketik tersembunyi)
 
 const prisma = new PrismaClient()
 
 async function testPassword() {
+  const nim = requireArg(0, 'npx tsx scripts/test-student-password.ts <NIM>')
+
   const student = await prisma.student.findUnique({
-    where: { nim: '2026010001' },
-    include: { user: true }
+    where: { nim },
+    include: { user: true },
   })
-  
+
   if (!student?.user) {
     console.log('❌ Student not found')
     return
   }
-  
-  console.log('🔍 Testing passwords for:', student.user.email)
-  console.log('')
-  
-  const testPasswords = [
-    '2026010001',
-    'password',
-    'mahasiswa',
-    'student',
-    'admin123',
-    '123456'
-  ]
-  
-  for (const pwd of testPasswords) {
-    const match = await bcrypt.compare(pwd, student.user.password)
-    if (match) {
-      console.log(`✅ FOUND! Password: "${pwd}"`)
-      break
-    } else {
-      console.log(`❌ Not: "${pwd}"`)
-    }
-  }
-  
-  await prisma.$disconnect()
+
+  console.log('🔍 Testing password for NIM', student.nim)
+  const candidate = await promptHidden('Password yang dicek: ')
+  const match = await bcrypt.compare(candidate, student.user.password)
+  console.log(match ? '✅ Password cocok' : '❌ Password tidak cocok')
 }
 
-testPassword().catch(console.error)
+testPassword()
+  .catch((e) => {
+    console.error('❌ Error:', e instanceof Error ? e.message : e)
+    process.exitCode = 1
+  })
+  .finally(() => prisma.$disconnect())

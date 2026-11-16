@@ -1,11 +1,15 @@
 import { PrismaClient } from '@prisma/client'
+import { requireArg } from './lib/cli'
+
+// Usage: npx tsx scripts/create-unpaid-bill.ts <NIM>
 
 const prisma = new PrismaClient()
 
 async function main() {
-  // Get first student
+  const nim = requireArg(0, 'npx tsx scripts/create-unpaid-bill.ts <NIM>')
+
   const student = await prisma.student.findFirst({
-    where: { nim: '2026010001' }
+    where: { nim }
   })
 
   if (!student) {
@@ -35,7 +39,7 @@ async function main() {
 
   console.log('✅ Created unpaid bill:', bill)
   console.log(`\n📝 Test payment flow:`)
-  console.log(`1. Login as: 2026010001 / mahasiswa123`)
+  console.log(`1. Login as student ${student.nim}`)
   console.log(`2. Dashboard will show unpaid bill`)
   console.log(`3. Click "Bayar sekarang"`)
   console.log(`4. Upload payment proof`)

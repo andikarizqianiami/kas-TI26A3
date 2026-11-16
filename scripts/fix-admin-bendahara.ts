@@ -1,113 +1,63 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, Role } from '@prisma/client'
 import { hashPassword } from '../lib/auth/hash'
+import { confirmDatabaseTarget, promptNewPassword } from './lib/cli'
+
+// Sets (rotates) the admin and bendahara passwords. Passwords are typed in a hidden
+// prompt and are never stored in this file or printed.
+//
+// Usage:
+//   npx tsx scripts/fix-admin-bendahara.ts
+//   DATABASE_URL="<url produksi>" npx tsx scripts/fix-admin-bendahara.ts
 
 const prisma = new PrismaClient()
 
+const MIN_PASSWORD_LENGTH = 12 // SECURITY.md: admin & bendahara minimal 12 karakter
+
+const ACCOUNTS = [
+  { label: 'Admin', email: 'admin@ti26a3.udb.ac.id', legacyEmail: 'admin@kas-ti26a3.test', role: Role.ADMIN },
+  { label: 'Bendahara', email: 'bendahara@ti26a3.udb.ac.id', legacyEmail: 'bendahara@kas-ti26a3.test', role: Role.BENDAHARA },
+] as const
+
 async function fixAdminBendahara() {
-  console.log('🔧 Fixing Admin and Bendahara users...\n')
+  console.log('🔧 Mengatur password Admin dan Bendahara\n')
+  await confirmDatabaseTarget('mengganti password admin & bendahara')
 
-  // Password yang kuat
-  const adminPassword = 'Admin@TI26A3#2024'
-  const bendaharaPassword = 'Bendahara@TI26A3#2024'
-
-  // Hash passwords
-  const adminHash = await hashPassword(adminPassword)
-  const bendaharaHash = await hashPassword(bendaharaPassword)
-
-  // Update admin email dan password
-  console.log('1️⃣ Updating admin user...')
-  const adminResult = await prisma.user.updateMany({
-    where: { email: 'admin@kas-ti26a3.test' },
-    data: {
-      email: 'admin@ti26a3.udb.ac.id',
-      password: adminHash,
-    }
-  })
-  
-  if (adminResult.count > 0) {
-    console.log('   ✅ Admin updated successfully')
-    console.log(`   - New email: admin@ti26a3.udb.ac.id`)
-    console.log(`   - New password: ${adminPassword}\n`)
-  } else {
-    // Try to create if not exists
-    const existingAdmin = await prisma.user.findUnique({
-      where: { email: 'admin@ti26a3.udb.ac.id' }
-    })
-    
-    if (!existingAdmin) {
-      await prisma.user.create({
-        data: {
-          email: 'admin@ti26a3.udb.ac.id',
-          password: adminHash,
-          role: 'ADMIN',
-          isActive: true,
-        }
-      })
-      console.log('   ✅ Admin created successfully\n')
-    } else {
-      // Update existing
-      await prisma.user.update({
-        where: { email: 'admin@ti26a3.udb.ac.id' },
-        data: { password: adminHash }
-      })
-      console.log('   ✅ Admin password updated\n')
-    }
+  // Collect both passwords first so a typo does not leave one account half-updated
+  const passwords = new Map<string, string>()
+  for (const account of ACCOUNTS) {
+    passwords.set(account.email, await promptNewPassword(account.label, MIN_PASSWORD_LENGTH))
   }
 
-  // Update bendahara email dan password
-  console.log('2️⃣ Updating bendahara user...')
-  const bendaharaResult = await prisma.user.updateMany({
-    where: { email: 'bendahara@kas-ti26a3.test' },
-    data: {
-      email: 'bendahara@ti26a3.udb.ac.id',
-      password: bendaharaHash,
-    }
-  })
-  
-  if (bendaharaResult.count > 0) {
-    console.log('   ✅ Bendahara updated successfully')
-    console.log(`   - New email: bendahara@ti26a3.udb.ac.id`)
-    console.log(`   - New password: ${bendaharaPassword}\n`)
-  } else {
-    // Try to create if not exists
-    const existingBendahara = await prisma.user.findUnique({
-      where: { email: 'bendahara@ti26a3.udb.ac.id' }
+  for (const account of ACCOUNTS) {
+    const passwordHash = await hashPassword(passwords.get(account.email)!)
+
+    // Older databases still use the .test domain; migrate those rows in place
+    const migrated = await prisma.user.updateMany({
+      where: { email: account.legacyEmail },
+      data: { email: account.email, password: passwordHash },
     })
-    
-    if (!existingBendahara) {
-      await prisma.user.create({
-        data: {
-          email: 'bendahara@ti26a3.udb.ac.id',
-          password: bendaharaHash,
-          role: 'BENDAHARA',
-          isActive: true,
-        }
-      })
-      console.log('   ✅ Bendahara created successfully\n')
-    } else {
-      // Update existing
-      await prisma.user.update({
-        where: { email: 'bendahara@ti26a3.udb.ac.id' },
-        data: { password: bendaharaHash }
-      })
-      console.log('   ✅ Bendahara password updated\n')
+
+    if (migrated.count > 0) {
+      console.log(`✅ ${account.label}: email dimigrasi dan password diperbarui`)
+      continue
     }
+
+    await prisma.user.upsert({
+      where: { email: account.email },
+      update: { password: passwordHash },
+      create: { email: account.email, password: passwordHash, role: account.role, isActive: true },
+    })
+    console.log(`✅ ${account.label}: password diperbarui (${account.email})`)
   }
 
-  console.log('✅ Done!\n')
-  console.log('📝 Login Credentials:')
-  console.log('   Admin:')
-  console.log(`   - Email: admin@ti26a3.udb.ac.id`)
-  console.log(`   - Password: ${adminPassword}\n`)
-  console.log('   Bendahara:')
-  console.log(`   - Email: bendahara@ti26a3.udb.ac.id`)
-  console.log(`   - Password: ${bendaharaPassword}\n`)
+  console.log('\nSelesai. Simpan password baru di password manager; jangan tulis di file repo.')
+  console.log('Sesi yang sudah login tetap aktif sampai NEXTAUTH_SECRET diganti.')
 }
 
 fixAdminBendahara()
   .catch((e) => {
-    console.error('❌ Error:', e)
-    process.exit(1)
+    console.error('❌ Error:', e instanceof Error ? e.message : e)
+    process.exitCode = 1
   })
   .finally(async () => {
     await prisma.$disconnect()

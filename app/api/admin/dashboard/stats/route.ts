@@ -96,27 +96,41 @@ export async function GET() {
       overdue: allBills.filter(b => b.status === 'OVERDUE').length
     }
 
-    // 4. Top Students by Payment Count
-    const studentsWithPaymentCount = await prisma.student.findMany({
-      include: {
-        bills: {
-          where: {
-            status: 'PAID'
-          }
-        }
+    // 4. Top 5 active students by paid bills. Ranked in the database: the old
+    // `take: 5` ran before sorting and returned 5 arbitrary students.
+    const topPayers = await prisma.bill.groupBy({
+      by: ['studentId'],
+      where: {
+        status: 'PAID',
+        student: { isActive: true }
       },
+      _count: { _all: true },
+      _sum: { amount: true },
+      orderBy: [
+        { _count: { studentId: 'desc' } },
+        { _sum: { amount: 'desc' } },
+        { studentId: 'asc' } // deterministic tie-break
+      ],
       take: 5
     })
 
-    const topStudents = studentsWithPaymentCount
-      .map(student => ({
-        name: student.name,
-        nim: student.nim,
-        paidCount: student.bills.length,
-        totalPaid: student.bills.reduce((sum, b) => sum + b.amount, 0)
-      }))
-      .sort((a, b) => b.paidCount - a.paidCount)
-      .slice(0, 5)
+    const topStudentRecords = await prisma.student.findMany({
+      where: { id: { in: topPayers.map(p => p.studentId) } },
+      select: { id: true, name: true, nim: true }
+    })
+    const studentsById = new Map(topStudentRecords.map(s => [s.id, s]))
+
+    const topStudents = topPayers.flatMap(payer => {
+      const student = studentsById.get(payer.studentId)
+      return student
+        ? [{
+            name: student.name,
+            nim: student.nim,
+            paidCount: payer._count._all,
+            totalPaid: payer._sum.amount || 0
+          }]
+        : []
+    })
 
     // 5. Income by Category
     const incomeByCategory = await prisma.cashIncome.groupBy({
@@ -181,6 +195,7 @@ export async function GET() {
       _sum: { amount: true }
     })
     const currentBalance = (totalIncome._sum.amount || 0) - (totalExpense._sum.amount || 0)
+    const totalStudents = await prisma.student.count()
 
     return NextResponse.json({
       paymentTrends,
@@ -195,7 +210,7 @@ export async function GET() {
         totalIncome: totalIncome._sum.amount || 0,
         totalExpense: totalExpense._sum.amount || 0,
         totalBills: allBills.length,
-        totalStudents: studentsWithPaymentCount.length
+        totalStudents
       }
     })
   } catch (error) {

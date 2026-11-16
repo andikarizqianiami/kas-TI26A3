@@ -1,36 +1,34 @@
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
+import { requireArg } from './lib/cli'
+
+// Reports whether a student still uses the default password (= NIM).
+// Usage: npx tsx scripts/test-password.ts <NIM>
 
 const prisma = new PrismaClient()
 
 async function testPassword() {
+  const nim = requireArg(0, 'npx tsx scripts/test-password.ts <NIM>')
+
   const student = await prisma.student.findFirst({
-    where: { nim: '2026010001' },
-    include: { user: true }
+    where: { nim },
+    include: { user: true },
   })
-  
+
   if (!student?.user) {
     console.log('❌ Student tidak ditemukan')
     return
   }
-  
+
+  const usesDefault = await bcrypt.compare(student.nim, student.user.password)
   console.log('=== Testing Password ===')
-  console.log('Email:', student.user.email)
   console.log('NIM:', student.nim)
-  console.log('Stored Hash:', student.user.password?.substring(0, 30) + '...')
-  
-  // Test password = NIM
-  const testPassword = student.nim
-  const isValid = await bcrypt.compare(testPassword, student.user.password!)
-  
-  console.log('\nTest Password:', testPassword)
-  console.log('Is Valid?', isValid ? '✅ YES' : '❌ NO')
-  
-  // Create new hash for comparison
-  const newHash = await bcrypt.hash(testPassword, 10)
-  console.log('\nNew Hash (for reference):', newHash.substring(0, 30) + '...')
-  
-  await prisma.$disconnect()
+  console.log('Masih memakai password default (NIM)?', usesDefault ? '⚠️ YA' : '✅ TIDAK')
 }
 
 testPassword()
+  .catch((e) => {
+    console.error('❌ Error:', e instanceof Error ? e.message : e)
+    process.exitCode = 1
+  })
+  .finally(() => prisma.$disconnect())

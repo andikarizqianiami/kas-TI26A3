@@ -30,9 +30,6 @@ async function resetPasswords() {
   console.log('\n📝 Students can now login with:')
   console.log('   Email/NIM: [their NIM]')
   console.log('   Password: [their NIM]')
-  console.log('\nExample:')
-  console.log('   Email/NIM: 2026010001')
-  console.log('   Password: 2026010001')
   
   await prisma.$disconnect()
 }

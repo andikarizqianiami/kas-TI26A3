@@ -1,11 +1,15 @@
 import { PrismaClient } from '@prisma/client'
+import { requireArg } from './lib/cli'
+
+// Usage: npx tsx scripts/set-bill-unpaid.ts <NIM>
 
 const prisma = new PrismaClient()
 
 async function main() {
-  // Get first student
+  const nim = requireArg(0, 'npx tsx scripts/set-bill-unpaid.ts <NIM>')
+
   const student = await prisma.student.findFirst({
-    where: { nim: '2026010001' }
+    where: { nim }
   })
 
   if (!student) {

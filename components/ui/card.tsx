@@ -4,7 +4,8 @@ import { cn } from '@/lib/utils/cn'
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & { variant?: 'default' | 'glass' | 'glow' }>(
   ({ className, variant = 'default', ...props }, ref) => {
     const variants = {
-      default: 'bg-navy-900 border-electric-blue/20 hover:border-electric-blue/40 hover:shadow-lg hover:shadow-electric-blue/10',
+      // Light theme tokens; the old dark-theme names (bg-navy-900, border-electric-blue/20) are not defined in the Tailwind theme
+      default: 'bg-white border-slate-200 shadow-sm hover:shadow-md',
       glass: 'glass glow-hover',
       glow: 'bg-navy-900 border-electric-blue/30 glow',
     }
@@ -29,7 +30,7 @@ CardHeader.displayName = 'CardHeader'
 
 const CardTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
   ({ className, ...props }, ref) => (
-    <h3 ref={ref} className={cn('text-xl font-bold leading-none tracking-tight text-foreground', className)} {...props} />
+    <h3 ref={ref} className={cn('text-xl font-bold leading-none tracking-tight text-slate-900', className)} {...props} />
   )
 )
 CardTitle.displayName = 'CardTitle'

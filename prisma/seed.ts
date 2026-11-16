@@ -4,8 +4,26 @@ import { getWeekPeriod, getStartOfWeek, getNextWednesday } from '../lib/utils/fo
 
 const prisma = new PrismaClient()
 
+const MIN_PASSWORD_LENGTH = 12 // SECURITY.md: admin & bendahara minimal 12 karakter
+
+/** Reads an initial password from env; there is deliberately no built-in default. */
+function requirePasswordEnv(name: string): string {
+  const value = process.env[name]
+  if (!value || value.length < MIN_PASSWORD_LENGTH) {
+    throw new Error(
+      `${name} wajib diisi (minimal ${MIN_PASSWORD_LENGTH} karakter). ` +
+        'Password default tidak lagi disediakan karena repo ini publik.'
+    )
+  }
+  return value
+}
+
 async function main() {
   console.log('🌱 Starting database seeding...')
+
+  // Validate before cleaning so a missing password never wipes the database
+  const adminInitialPassword = requirePasswordEnv('ADMIN_DEFAULT_PASSWORD')
+  const bendaharaInitialPassword = requirePasswordEnv('BENDAHARA_DEFAULT_PASSWORD')
 
   // Clean database
   console.log('🗑️  Cleaning database...')
@@ -26,8 +44,7 @@ async function main() {
 
   // Create Admin User
   console.log('👤 Creating admin user...')
-  // PENTING: Ganti password ini setelah deployment pertama!
-  const adminPassword = await hashPassword(process.env.ADMIN_DEFAULT_PASSWORD || 'ChangeThisPassword123!')
+  const adminPassword = await hashPassword(adminInitialPassword)
   const admin = await prisma.user.create({
     data: {
       email: 'admin@ti26a3.udb.ac.id',
@@ -39,8 +56,7 @@ async function main() {
 
   // Create Bendahara User
   console.log('👤 Creating bendahara user...')
-  // PENTING: Ganti password ini setelah deployment pertama!
-  const bendaharaPassword = await hashPassword(process.env.BENDAHARA_DEFAULT_PASSWORD || 'ChangeThisPassword123!')
+  const bendaharaPassword = await hashPassword(bendaharaInitialPassword)
   const bendahara = await prisma.user.create({
     data: {
       email: 'bendahara@ti26a3.udb.ac.id',
@@ -97,11 +113,11 @@ async function main() {
   console.log('🔐 Login Credentials:')
   console.log('   Admin:')
   console.log('   - Email: admin@ti26a3.udb.ac.id')
-  console.log('   - Password: (check environment variable or default)')
+  console.log('   - Password: nilai ADMIN_DEFAULT_PASSWORD')
   console.log('')
   console.log('   Bendahara:')
   console.log('   - Email: bendahara@ti26a3.udb.ac.id')
-  console.log('   - Password: (check environment variable or default)')
+  console.log('   - Password: nilai BENDAHARA_DEFAULT_PASSWORD')
   console.log('')
   console.log('⚠️  IMPORTANT: Change default passwords immediately after first login!')
   console.log('')

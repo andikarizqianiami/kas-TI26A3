@@ -14,39 +14,53 @@ export const authConfig: NextAuthConfig = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error('Email dan password harus diisi')
+        // Invalid logins return null so Auth.js raises CredentialsSignin. Throwing a plain
+        // Error is treated as a server error, and in debug mode (development) Auth.js then
+        // logs the whole submitted form, including the password, to the terminal.
+        const rejectLogin = (reason: string) => {
+          console.warn(`[auth] Login gagal: ${reason}`)
+          return null
         }
 
-        const email = credentials.email as string
-        const password = credentials.password as string
+        const rawIdentifier = credentials?.email
+        const password = credentials?.password
+        if (typeof rawIdentifier !== 'string' || typeof password !== 'string' || !password) {
+          return rejectLogin('email/NIM atau password kosong')
+        }
+
+        // Text copied from chat or docs often carries surrounding spaces or a
+        // sentence-ending period ("...udb.ac.id."); neither can be part of an email or NIM
+        const identifier = rawIdentifier.trim().replace(/\.+$/, '')
+        if (!identifier) {
+          return rejectLogin('email/NIM atau password kosong')
+        }
 
         // Find user by email or NIM
         let user = await prisma.user.findUnique({
-          where: { email: email.toLowerCase() },
+          where: { email: identifier.toLowerCase() },
           include: { student: true },
         })
 
         // If not found by email, try to find by NIM
         if (!user) {
           const student = await prisma.student.findUnique({
-            where: { nim: email },
+            where: { nim: identifier },
             include: { user: true },
           })
           user = student?.user ? { ...student.user, student } : null
         }
 
         if (!user) {
-          throw new Error('Email atau NIM tidak ditemukan')
+          return rejectLogin('email atau NIM tidak ditemukan')
         }
 
         if (!user.isActive) {
-          throw new Error('Akun tidak aktif')
+          return rejectLogin('akun tidak aktif')
         }
 
         const isValid = await verifyPassword(password, user.password)
         if (!isValid) {
-          throw new Error('Password salah')
+          return rejectLogin('password salah')
         }
 
         return {
