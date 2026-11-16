@@ -15,8 +15,8 @@ export default function HomePage() {
           </Link>
           <div className="login-story-copy">
             <p className="login-overline">Administrasi kelas</p>
-            <h1>Catatan kas yang jelas, untuk semua.</h1>
-            <p>Iuran, pembayaran, dan saldo kelas tercatat dalam satu tempat yang mudah diikuti.</p>
+            <h1>CATATAN KAS UNTUK SENANG-SENANG</h1>
+            <p>BILA TIDAK MEMBAYAR AKAN KAMI HAJAR DITEMPAT</p>
             <div className="login-receipt" aria-label="Transparansi kas kelas">
               <div className="login-receipt-head"><span>RINGKASAN KELAS</span><span>TI26A3</span></div>
               <div className="login-receipt-line"><span><Check size={15} /> Tagihan tercatat</span><span>01</span></div>
