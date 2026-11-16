@@ -31,8 +31,8 @@ export default function HomePage() {
           <div className="simple-login-card">
             <div className="simple-login-heading">
               <p className="login-overline">Selamat datang</p>
-              <h2>Sistem Kas Kelas Digital</h2>
-              <p>Kelola iuran dan pembayaran kelas dengan mudah dan transparan.</p>
+              <h2>Kas Kelas Digital Anomali</h2>
+              <p>lika-liku kas kelas TI26A3</p>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '24px' }}>
