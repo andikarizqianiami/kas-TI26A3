@@ -37,6 +37,7 @@ yarn-error.log*
 *.md
 !README.md
 !DEPLOYMENT_CHECKLIST.md
+!CUSTOM_DOMAIN_SETUP.md
 
 # local credential notes (never commit passwords)
 LOGIN_CREDENTIALS*.md
