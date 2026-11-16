@@ -2,39 +2,9 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import { FormEvent, useState } from 'react'
-import { ArrowUpRight, Check, LockKeyhole } from 'lucide-react'
-import { PasswordField } from '@/components/ui/password-field'
+import { Check, ArrowRight } from 'lucide-react'
 
 export default function HomePage() {
-  const router = useRouter()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    setError('')
-    setLoading(true)
-
-    try {
-      const result = await signIn('credentials', { email, password, redirect: false })
-      if (result?.error) {
-        setError('Email, NIM, atau password belum tepat.')
-        return
-      }
-      router.push('/dashboard')
-      router.refresh()
-    } catch {
-      setError('Terjadi kesalahan. Silakan coba lagi.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   return (
     <main className="simple-login-page">
       <div className="login-shell">
@@ -60,33 +30,35 @@ export default function HomePage() {
         <section className="login-form-side">
           <div className="simple-login-card">
             <div className="simple-login-heading">
-              <p className="login-overline">Selamat datang kembali</p>
-              <h2>Masuk ke akunmu</h2>
-              <p>Gunakan email atau NIM yang terdaftar.</p>
+              <p className="login-overline">Selamat datang</p>
+              <h2>Sistem Kas Kelas Digital</h2>
+              <p>Kelola iuran dan pembayaran kelas dengan mudah dan transparan.</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="simple-login-form">
-              {error && <p className="form-alert" role="alert">{error}</p>}
-              <label>
-                Email atau NIM
-                <input className="input" type="text" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="nama@student.udb.ac.id" autoComplete="username" required disabled={loading} />
-              </label>
-              <PasswordField
-                label="Password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                placeholder="Masukkan password"
-                autoComplete="current-password"
-                required
-                disabled={loading}
-              />
-              <button className="simple-login-submit" type="submit" disabled={loading}>
-                {loading ? 'Memproses...' : <>Masuk <ArrowUpRight size={17} /></>}
-              </button>
-            </form>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '24px' }}>
+              <Link href="/auth/login" className="simple-login-submit" style={{ textAlign: 'center', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                Masuk ke Akun <ArrowRight size={17} />
+              </Link>
+              
+              <Link href="/auth/register" style={{ 
+                textAlign: 'center', 
+                padding: '12px', 
+                border: '1.5px solid #2d5a45', 
+                borderRadius: '8px', 
+                color: '#2d5a45', 
+                textDecoration: 'none',
+                fontWeight: '600',
+                transition: 'all 0.2s ease'
+              }}>
+                Daftar Akun Baru
+              </Link>
+            </div>
 
-            <p className="simple-login-register">Belum punya akun? <Link href="/auth/register">Daftar</Link></p>
-            <p className="login-secure-note"><LockKeyhole size={14} /> Akses akun hanya untuk anggota kelas.</p>
+            <p className="simple-login-register" style={{ marginTop: '24px', textAlign: 'center' }}>
+              <Link href="/auth/forgot-password" style={{ color: '#666', fontSize: '14px' }}>
+                Lupa Password?
+              </Link>
+            </p>
           </div>
           <p className="simple-login-footer">KAS TI26A3 <span>·</span> Universitas Duta Bangsa</p>
         </section>
