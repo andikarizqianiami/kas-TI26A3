@@ -36,6 +36,7 @@ yarn-error.log*
 # markdown documentation files (exclude from git)
 *.md
 !README.md
+!DEPLOYMENT_CHECKLIST.md
 
 # local credential notes (never commit passwords)
 LOGIN_CREDENTIALS*.md
